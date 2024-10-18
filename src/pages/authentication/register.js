@@ -8,27 +8,27 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [nameError, setNameError] = useState(false);
   const [nameErrorMessage, setNameErrorMessage] = useState("");
+  const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  // This code only runs on the client side, to determine the system color preference
-  useEffect(() => {}, []);
 
   const validateInputs = () => {
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const name = document.getElementById("name");
-
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage("Please enter a valid email address.");
       isValid = false;
@@ -37,7 +37,7 @@ const Register = () => {
       setEmailErrorMessage("");
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage("Password must be at least 6 characters long.");
       isValid = false;
@@ -46,7 +46,7 @@ const Register = () => {
       setPasswordErrorMessage("");
     }
 
-    if (!name.value || name.value.length < 1) {
+    if (!name || name.length < 1) {
       setNameError(true);
       setNameErrorMessage("Name is required.");
       isValid = false;
@@ -58,18 +58,30 @@ const Register = () => {
     return isValid;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     if (nameError || emailError || passwordError) {
-      event.preventDefault();
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get("name"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    try {
+      await Axios.post(
+        "/auth/register",
+        { email, password, name },
+        { withCredentials: true }
+      );
+      enqueueSnackbar("You have successfully registered!", "success");
+      navigate("/dashboard");
+    } catch (error) {
+      if (
+        error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      )
+        enqueueSnackbar(error.response.data.message, "error");
+      else enqueueSnackbar("Server error!", "error");
+    }
   };
 
   return (
@@ -95,6 +107,8 @@ const Register = () => {
             fullWidth
             id="name"
             placeholder="Jon Snow"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             error={nameError}
             helperText={nameErrorMessage}
             color={nameError ? "error" : "primary"}
@@ -110,6 +124,8 @@ const Register = () => {
             name="email"
             autoComplete="email"
             variant="outlined"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             error={emailError}
             helperText={emailErrorMessage}
             color={passwordError ? "error" : "primary"}
@@ -126,6 +142,8 @@ const Register = () => {
             id="password"
             autoComplete="new-password"
             variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             error={passwordError}
             helperText={passwordErrorMessage}
             color={passwordError ? "error" : "primary"}

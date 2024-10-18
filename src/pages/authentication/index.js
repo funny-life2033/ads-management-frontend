@@ -5,6 +5,8 @@ import AppTheme from "../../shared-theme/AppTheme";
 import ColorModeSelect from "../../shared-theme/ColorModeSelect";
 import MuiCard from "@mui/material/Card";
 import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Axios } from "../../utils";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -48,6 +50,12 @@ const AuthContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function Authentication(props) {
+  useEffect(() => {
+    Axios.get("/auth/isAuth", { withCredentials: true })
+      .then((_) => {})
+      .catch((_) => {});
+  }, []);
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
