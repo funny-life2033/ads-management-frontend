@@ -1,8 +1,7 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -22,6 +21,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
+  const [isLogging, setIsLogging] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -36,15 +36,17 @@ const Login = () => {
     if (emailError || passwordError) {
       return;
     }
-
+    setIsLogging(true);
     try {
       await Axios.post(
         "/auth/login",
         { email, password },
         { withCredentials: true }
       );
-      enqueueSnackbar("You have successfully logged in!", "success");
-      navigate("/dashboard");
+      enqueueSnackbar("You have successfully logged in!", {
+        variant: "success",
+      });
+      navigate("/company");
     } catch (error) {
       if (
         error &&
@@ -52,9 +54,10 @@ const Login = () => {
         error.response.data &&
         error.response.data.message
       )
-        enqueueSnackbar(error.response.data.message, "error");
-      else enqueueSnackbar("Server error!", "error");
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
+      else enqueueSnackbar("Server error!", { variant: "error" });
     }
+    setIsLogging(false);
   };
 
   const validateInputs = () => {
@@ -86,7 +89,11 @@ const Login = () => {
       <Typography
         component="h1"
         variant="h4"
-        sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
+        sx={{
+          width: "100%",
+          fontSize: "clamp(2rem, 10vw, 2.15rem)",
+          marginBottom: 2,
+        }}
       >
         Sign in
       </Typography>
@@ -102,8 +109,8 @@ const Login = () => {
         }}
       >
         <FormControl>
-          <FormLabel htmlFor="email">Email</FormLabel>
           <TextField
+            label="Email"
             error={emailError}
             helperText={emailErrorMessage}
             id="email"
@@ -122,19 +129,8 @@ const Login = () => {
           />
         </FormControl>
         <FormControl>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <FormLabel htmlFor="password">Password</FormLabel>
-            <Link
-              component="button"
-              type="button"
-              onClick={handleClickOpen}
-              variant="body2"
-              sx={{ alignSelf: "baseline" }}
-            >
-              Forgot your password?
-            </Link>
-          </Box>
           <TextField
+            label="Password"
             error={passwordError}
             helperText={passwordErrorMessage}
             name="password"
@@ -150,20 +146,38 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {/* <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 1,
+            }}
+          >
+            <Link
+              component="button"
+              type="button"
+              onClick={handleClickOpen}
+              variant="body2"
+              sx={{ alignSelf: "baseline" }}
+            >
+              Forgot your password?
+            </Link>
+          </Box> */}
         </FormControl>
         <FormControlLabel
           control={<Checkbox value="remember" color="primary" />}
           label="Remember me"
         />
-        <ForgotPassword open={open} handleClose={handleClose} />
-        <Button
+        {/* <ForgotPassword open={open} handleClose={handleClose} /> */}
+        <LoadingButton
           type="submit"
           fullWidth
           variant="contained"
           onClick={validateInputs}
+          loading={isLogging}
         >
           Sign in
-        </Button>
+        </LoadingButton>
         <Typography sx={{ textAlign: "center" }}>
           Don&apos;t have an account?{" "}
           <span>

@@ -1,16 +1,16 @@
 import {
   Box,
-  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
-  FormLabel,
   TextField,
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { Axios } from "../../utils";
 
 const Register = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -24,6 +24,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const validateInputs = () => {
     let isValid = true;
@@ -63,6 +64,7 @@ const Register = () => {
     if (nameError || emailError || passwordError) {
       return;
     }
+    setIsRegistering(true);
 
     try {
       await Axios.post(
@@ -70,18 +72,22 @@ const Register = () => {
         { email, password, name },
         { withCredentials: true }
       );
-      enqueueSnackbar("You have successfully registered!", "success");
-      navigate("/dashboard");
+      enqueueSnackbar("You have successfully registered!", {
+        variant: "success",
+      });
+      navigate("/company");
     } catch (error) {
+      console.log(error);
       if (
         error &&
         error.response &&
         error.response.data &&
         error.response.data.message
       )
-        enqueueSnackbar(error.response.data.message, "error");
-      else enqueueSnackbar("Server error!", "error");
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
+      else enqueueSnackbar("Server error!", { variant: "error" });
     }
+    setIsRegistering(false);
   };
 
   return (
@@ -89,7 +95,11 @@ const Register = () => {
       <Typography
         component="h1"
         variant="h4"
-        sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
+        sx={{
+          width: "100%",
+          fontSize: "clamp(2rem, 10vw, 2.15rem)",
+          marginBottom: 2,
+        }}
       >
         Sign up
       </Typography>
@@ -99,9 +109,9 @@ const Register = () => {
         sx={{ display: "flex", flexDirection: "column", gap: 2 }}
       >
         <FormControl>
-          <FormLabel htmlFor="name">Full name</FormLabel>
           <TextField
             autoComplete="name"
+            label="Full name"
             name="name"
             required
             fullWidth
@@ -115,10 +125,10 @@ const Register = () => {
           />
         </FormControl>
         <FormControl>
-          <FormLabel htmlFor="email">Email</FormLabel>
           <TextField
             required
             fullWidth
+            label="Email"
             id="email"
             placeholder="your@email.com"
             name="email"
@@ -132,10 +142,10 @@ const Register = () => {
           />
         </FormControl>
         <FormControl>
-          <FormLabel htmlFor="password">Password</FormLabel>
           <TextField
             required
             fullWidth
+            label="Password"
             name="password"
             placeholder="••••••"
             type="password"
@@ -153,14 +163,15 @@ const Register = () => {
           control={<Checkbox value="allowExtraEmails" color="primary" />}
           label="I want to receive updates via email."
         />
-        <Button
+        <LoadingButton
           type="submit"
           fullWidth
           variant="contained"
           onClick={validateInputs}
+          loading={isRegistering}
         >
           Sign up
-        </Button>
+        </LoadingButton>
         <Typography sx={{ textAlign: "center" }}>
           Already have an account?{" "}
           <span>
