@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import Plans from "../subs-plans";
 import Dashboard from "../dashboard";
 import { useSnackbar } from "notistack";
+import Checkout from "../checkout";
 
 const NAVIGATION = [
   {
@@ -136,7 +137,10 @@ const Layout = ({ window }) => {
       <DashboardLayout>
         <PageContainer>
           {router.pathname === "/dashboard" && <Dashboard />}
-          {router.pathname === "/plans" && <Plans />}
+          {router.pathname === "/plans" && <Plans navigate={router.navigate} />}
+          {router.pathname.startsWith("/checkout:") && (
+            <Checkout productId={router.pathname.split("/checkout:")[1]} />
+          )}
         </PageContainer>
       </DashboardLayout>
     </AppProvider>

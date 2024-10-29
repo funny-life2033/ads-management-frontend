@@ -6,10 +6,10 @@ import {
   Container,
   Grid,
   Typography,
-  Tooltip,
   Fade,
 } from "@mui/material";
 import { styled } from "@mui/system";
+import { useEffect, useState } from "react";
 // import { FaCheck, FaTimes, FaRocket, FaCog, FaCrown } from "react-icons/fa";
 
 const PlanCard = styled(Card)(({ theme, ispopular }) => ({
@@ -106,8 +106,21 @@ const plans = [
   },
 ];
 
-const SubcriptionPlans = () => {
+const SubcriptionPlans = ({ navigate }) => {
   // const [hoveredPlan, setHoveredPlan] = useState(null);
+  const [plans, setPlans] = useState([]);
+
+  useEffect(() => {
+    Axios.get("/subscription/plans", { withCredentials: true })
+      .then(({ data }) => {
+        setPlans(data.plans);
+      })
+      .catch((_) => {});
+  }, []);
+
+  const goToCheckout = (productId) => {
+    navigate(`/checkout:${productId}`);
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 8 }}>
@@ -119,7 +132,7 @@ const SubcriptionPlans = () => {
           <Fade
             in={true}
             style={{ transitionDelay: `${index * 100}ms` }}
-            key={plan.title}
+            key={plan.id}
           >
             <Grid item xs={12} md={4} minWidth={350}>
               <PlanCard
@@ -162,22 +175,11 @@ const SubcriptionPlans = () => {
                         /month
                       </Typography>
                     </PlanPrice>
-                    {plan.features.map((feature, idx) => (
-                      <Tooltip
-                        key={idx}
-                        title={`Learn more about ${feature}`}
-                        placement="top"
-                        arrow
-                      >
-                        <PlanFeature>
-                          {/* <FaCheck
-                          color={plan.color}
-                          style={{ marginRight: 8 }}
-                        /> */}
-                          <Typography variant="body1">{feature}</Typography>
-                        </PlanFeature>
-                      </Tooltip>
-                    ))}
+                    <PlanFeature>
+                      <Typography variant="body1">
+                        {plan.description}
+                      </Typography>
+                    </PlanFeature>
                   </Box>
 
                   <CtaButton
@@ -194,6 +196,7 @@ const SubcriptionPlans = () => {
                       },
                     }}
                     aria-label={`Select ${plan.title} plan`}
+                    onClick={() => goToCheckout(plan.id)}
                   >
                     Select Plan
                   </CtaButton>
