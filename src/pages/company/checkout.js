@@ -8,12 +8,13 @@ import {
   CircularProgress,
   Container,
   Paper,
+  IconButton,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
+import EditIcon from "@mui/icons-material/Edit";
 import { Axios } from "../../utils";
 import { useSnackbar } from "notistack";
-import { useNavigate } from "react-router-dom";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: "2rem",
@@ -52,9 +53,8 @@ const SubmitButton = styled(Button)({
   },
 });
 
-const Checkout = ({ productId }) => {
+const Checkout = ({ productId, navigate }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -66,6 +66,7 @@ const Checkout = ({ productId }) => {
     zipCode: "",
     country: "",
   });
+  const [initialFormData, setInitialFormData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,22 +74,48 @@ const Checkout = ({ productId }) => {
   useEffect(() => {
     Axios.get("/subscription/check", { withCredentials: true })
       .then((res) => {
-        const { product, endDate, nextPaymentDate } = res.data;
+        const { product, paymentInfo } = res.data;
 
         if (productId === product.id) {
           enqueueSnackbar("You are already in the plan!", {
             variant: "error",
           });
-          navigate("/company");
+          navigate("/plans");
         } else {
+          const formData = {
+            ...paymentInfo,
+            expiryDate:
+              paymentInfo.expiryDate &&
+              paymentInfo.expiryDate !== "" &&
+              `${paymentInfo.expiryDate.split("-")[1].padStart(2, "0")}/${paymentInfo.expiryDate.split("-")[0].slice(-2)}`,
+          };
+          setFormData({ ...formData });
+          setInitialFormData({ ...formData });
         }
 
         setIsLoading(false);
       })
-      .catch((_) => {
+      .catch((error) => {
+        if (
+          error &&
+          error.response &&
+          error.response.data &&
+          error.response.data.paymentInfo
+        ) {
+          const paymentInfo = error.response.data.paymentInfo;
+          const formData = {
+            ...paymentInfo,
+            expiryDate:
+              paymentInfo.expiryDate &&
+              paymentInfo.expiryDate !== "" &&
+              `${paymentInfo.expiryDate.split("-")[1].padStart(2, "0")}/${paymentInfo.expiryDate.split("-")[0].slice(-2)}`,
+          };
+          setFormData({ ...formData });
+          setInitialFormData({ ...formData });
+        }
         setIsLoading(false);
       });
-  }, []);
+  }, [enqueueSnackbar, navigate, productId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,7 +143,9 @@ const Checkout = ({ productId }) => {
 
     switch (name) {
       case "cardNumber":
-        if (value.replace(/\s/g, "").length !== 16) {
+        if (value.startsWith("XXXX")) {
+          delete newErrors.cardNumber;
+        } else if (value.replace(/\s/g, "").length !== 16) {
           newErrors.cardNumber = "Invalid card number";
         } else {
           delete newErrors.cardNumber;
@@ -141,30 +170,85 @@ const Checkout = ({ productId }) => {
     setErrors(newErrors);
   };
 
+  const validateFields = () => {
+    const newErrors = { ...errors };
+
+    for (let key of Object.keys(formData)) {
+      switch (key) {
+        case "cardNumber":
+          if (formData[key].startsWith("XXXX")) {
+            delete newErrors.cardNumber;
+          } else if (formData[key].replace(/\s/g, "").length !== 16) {
+            newErrors.cardNumber = "Invalid card number";
+          } else {
+            delete newErrors.cardNumber;
+          }
+          break;
+        case "expiryDate":
+          const [month, year] = formData[key].split("/");
+          if (!month || !year || month > 12 || month < 1) {
+            newErrors.expiryDate = "Invalid expiration date";
+          } else {
+            delete newErrors.expiryDate;
+          }
+          break;
+        default:
+          if (!formData[key].trim()) {
+            newErrors[key] = "This field is required";
+          } else {
+            delete newErrors[key];
+          }
+      }
+    }
+
+    setErrors(newErrors);
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     // Validate all fields
-    Object.keys(formData).forEach((key) => validateField(key, formData[key]));
+    const errors = validateFields();
 
     if (Object.keys(errors).length === 0) {
-      await Axios.post(
-        "/subscription",
-        { productId, paymentInfo: formData },
-        { withCredentials: true }
-      );
-
-      enqueueSnackbar("Successfully purchased!", {
-        variant: "success",
-      });
-      navigate("/company");
       try {
+        await Axios.post(
+          "/subscription",
+          {
+            productId,
+            paymentInfo:
+              JSON.stringify(formData) === JSON.stringify(initialFormData)
+                ? null
+                : {
+                    ...formData,
+                    cardNumber: formData.cardNumber
+                      ? formData.cardNumber.replaceAll(" ", "")
+                      : "",
+                  },
+          },
+          { withCredentials: true }
+        );
+
+        enqueueSnackbar("Successfully purchased!", {
+          variant: "success",
+        });
+        navigate("/dashboard");
       } catch (error) {
-        console.log(JSON.stringify(error, null, 2));
-        // enqueueSnackbar(error, {
-        //   variant: "error",
-        // });
+        if (
+          error &&
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        )
+          enqueueSnackbar(error.response.data.message, {
+            variant: "error",
+          });
+        else
+          enqueueSnackbar("Server error!", {
+            variant: "error",
+          });
       }
     }
 
@@ -199,6 +283,51 @@ const Checkout = ({ productId }) => {
           </Typography>
 
           <Grid container spacing={3}>
+            {formData.cardNumber && formData.cardNumber.startsWith("XXXX") ? (
+              <Grid item xs={12}>
+                CreditCard info: {formData.cardNumber} {formData.expiryDate}{" "}
+                <IconButton
+                  onClick={() =>
+                    setFormData((data) => ({ ...data, cardNumber: "" }))
+                  }
+                >
+                  <EditIcon />
+                </IconButton>
+              </Grid>
+            ) : (
+              <>
+                <Grid item xs={12}>
+                  <StyledTextField
+                    fullWidth
+                    label="Card Number"
+                    name="cardNumber"
+                    value={formData.cardNumber}
+                    onChange={handleChange}
+                    error={!!errors.cardNumber}
+                    helperText={errors.cardNumber}
+                    inputProps={{ "aria-label": "Card Number" }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <StyledTextField
+                    fullWidth
+                    label="Expiry Date (MM/YY)"
+                    name="expiryDate"
+                    value={formData.expiryDate}
+                    onChange={handleChange}
+                    error={!!errors.expiryDate}
+                    helperText={errors.expiryDate}
+                    inputProps={{ "aria-label": "Expiry Date" }}
+                  />
+                </Grid>
+              </>
+            )}
+
+            <Grid item xs={12}>
+              Billing Address
+            </Grid>
+
             <Grid item xs={12} sm={6}>
               <StyledTextField
                 fullWidth
@@ -222,32 +351,6 @@ const Checkout = ({ productId }) => {
                 error={!!errors.lastName}
                 helperText={errors.lastName}
                 inputProps={{ "aria-label": "Last Name" }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <StyledTextField
-                fullWidth
-                label="Card Number"
-                name="cardNumber"
-                value={formData.cardNumber}
-                onChange={handleChange}
-                error={!!errors.cardNumber}
-                helperText={errors.cardNumber}
-                inputProps={{ "aria-label": "Card Number" }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <StyledTextField
-                fullWidth
-                label="Expiry Date (MM/YY)"
-                name="expiryDate"
-                value={formData.expiryDate}
-                onChange={handleChange}
-                error={!!errors.expiryDate}
-                helperText={errors.expiryDate}
-                inputProps={{ "aria-label": "Expiry Date" }}
               />
             </Grid>
 

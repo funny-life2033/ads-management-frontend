@@ -7,9 +7,14 @@ import {
   Grid,
   Typography,
   Fade,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { useEffect, useState } from "react";
+import { Axios } from "../../utils";
+import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
+import { useSnackbar } from "notistack";
 // import { FaCheck, FaTimes, FaRocket, FaCog, FaCrown } from "react-icons/fa";
 
 const PlanCard = styled(Card)(({ theme, ispopular }) => ({
@@ -64,66 +69,62 @@ const CtaButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(1, 3),
 }));
 
-const plans = [
-  {
-    title: "Basic",
-    price: "$99",
-    features: [
-      "Social Media Management",
-      "Content Creation (2 posts/week)",
-      "Monthly Performance Report",
-      "Email Support",
-    ],
-    // icon: <FaCog size={24} />,
-    color: "#3f51b5",
-  },
-  {
-    title: "Standard",
-    price: "$199",
-    features: [
-      "Everything in Basic",
-      "Content Creation (5 posts/week)",
-      "SEO Optimization",
-      "Ad Campaign Management",
-      "Bi-weekly Strategy Call",
-    ],
-    // icon: <FaRocket size={24} />,
-    color: "#f50057",
-    ispopular: "true",
-  },
-  {
-    title: "Premium",
-    price: "$399",
-    features: [
-      "Everything in Standard",
-      "Content Creation (Daily posts)",
-      "Influencer Outreach",
-      "Custom Website Development",
-      "24/7 Priority Support",
-    ],
-    // icon: <FaCrown size={24} />,
-    color: "#ff9100",
-  },
-];
-
 const SubcriptionPlans = ({ navigate }) => {
-  // const [hoveredPlan, setHoveredPlan] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
   const [plans, setPlans] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    Axios.get("/subscription/plans", { withCredentials: true })
+    Axios.get("/subscription", { withCredentials: true })
       .then(({ data }) => {
         setPlans(data.plans);
+        setIsLoading(false);
       })
-      .catch((_) => {});
+      .catch((error) => {
+        console.log(error);
+        setIsLoading(false);
+      });
   }, []);
 
   const goToCheckout = (productId) => {
     navigate(`/checkout:${productId}`);
   };
 
+  const closePlan = async () => {
+    setIsClosing(true);
+    try {
+      await Axios.delete("subscription", { withCredentials: true });
+      enqueueSnackbar("Successfully cancelled", {
+        variant: "success",
+      });
+      setPlans((plans) =>
+        plans.map((plan) => ({ ...plan, isYourPlan: false }))
+      );
+    } catch (error) {
+      if (
+        error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      )
+        enqueueSnackbar(error.response.data.message, {
+          variant: "error",
+        });
+      else enqueueSnackbar("Server error!", { variant: "error" });
+    }
+    setIsClosing(false);
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={isLoading || isClosing}
+        onClick={() => {}}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Typography variant="h5" align="center" color="textSecondary" paragraph>
         Choose the perfect plan to boost your online presence
       </Typography>
@@ -163,7 +164,7 @@ const SubcriptionPlans = ({ navigate }) => {
                           justifyContent: "center",
                         }}
                       >
-                        {plan.icon}
+                        <RocketLaunchIcon style={{ fontSize: 24 }} />
                       </Box>
                     </Box>
                     <PlanTitle variant="h4" align="center">
@@ -180,26 +181,76 @@ const SubcriptionPlans = ({ navigate }) => {
                         {plan.description}
                       </Typography>
                     </PlanFeature>
+                    <PlanFeature>
+                      <Typography variant="body1">
+                        {plan.isPending
+                          ? "Your last payment is on pending now"
+                          : plan.nextPaymentDate
+                            ? `Your next payment date is ${plan.nextPaymentDate}`
+                            : `Your plan will end on ${plan.endDate}`}
+                      </Typography>
+                    </PlanFeature>
                   </Box>
 
-                  <CtaButton
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    size="large"
-                    sx={{
-                      mt: 4,
-                      bgcolor: plan.color,
-                      "&:hover": {
+                  {plan.isYourPlan ? (
+                    <>
+                      <CtaButton
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        disabled={true}
+                        sx={{
+                          mt: 4,
+                          bgcolor: plan.color,
+                          "&:hover": {
+                            bgcolor: plan.color,
+                            filter: "brightness(90%)",
+                          },
+                        }}
+                      >
+                        Your plan
+                      </CtaButton>
+                      <CtaButton
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        sx={{
+                          mt: 1,
+                          bgcolor: plan.color,
+                          "&:hover": {
+                            bgcolor: plan.color,
+                            filter: "brightness(90%)",
+                          },
+                        }}
+                        disabled={isLoading || isClosing}
+                        onClick={closePlan}
+                      >
+                        Close this plan
+                      </CtaButton>
+                    </>
+                  ) : (
+                    <CtaButton
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      size="large"
+                      sx={{
+                        mt: 4,
                         bgcolor: plan.color,
-                        filter: "brightness(90%)",
-                      },
-                    }}
-                    aria-label={`Select ${plan.title} plan`}
-                    onClick={() => goToCheckout(plan.id)}
-                  >
-                    Select Plan
-                  </CtaButton>
+                        "&:hover": {
+                          bgcolor: plan.color,
+                          filter: "brightness(90%)",
+                        },
+                      }}
+                      disabled={isLoading || isClosing}
+                      aria-label={`Select ${plan.title} plan`}
+                      onClick={() => goToCheckout(plan.id)}
+                    >
+                      Select Plan
+                    </CtaButton>
+                  )}
                 </CardContent>
               </PlanCard>
             </Grid>

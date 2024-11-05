@@ -65,7 +65,7 @@ const NAVIGATION = [
 ];
 
 const demoTheme = extendTheme({
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: { light: true },
   colorSchemeSelector: "class",
   breakpoints: {
     values: {
@@ -122,6 +122,7 @@ const Layout = ({ window }) => {
       enqueueSnackbar("You have logged out!", {
         variant: "success",
       });
+      navigate("/authentication/login");
     } catch (error) {}
   };
 
@@ -131,7 +132,7 @@ const Layout = ({ window }) => {
       router={router}
       theme={demoTheme}
       window={demoWindow}
-      authentication={{ signOut: logout }}
+      authentication={{ signOut: logout, signIn: () => {} }}
       session={{ user: companyData }}
     >
       <DashboardLayout>
@@ -139,7 +140,10 @@ const Layout = ({ window }) => {
           {router.pathname === "/dashboard" && <Dashboard />}
           {router.pathname === "/plans" && <Plans navigate={router.navigate} />}
           {router.pathname.startsWith("/checkout:") && (
-            <Checkout productId={router.pathname.split("/checkout:")[1]} />
+            <Checkout
+              productId={router.pathname.split("/checkout:")[1]}
+              navigate={router.navigate}
+            />
           )}
         </PageContainer>
       </DashboardLayout>

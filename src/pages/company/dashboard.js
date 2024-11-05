@@ -68,7 +68,6 @@ const Dashboard = () => {
     link: "",
   });
   const [errors, setErrors] = useState({});
-  const [isDragging, setIsDragging] = useState(false);
 
   const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -104,17 +103,14 @@ const Dashboard = () => {
 
   const handleDragEnter = (e) => {
     e.preventDefault();
-    setIsDragging(true);
   };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
-    setIsDragging(false);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
       setAdData({ ...adData, banner: file });
@@ -197,7 +193,6 @@ const Dashboard = () => {
             onDragOver={(e) => e.preventDefault()}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            isDragging={isDragging}
           >
             <input
               type="file"
