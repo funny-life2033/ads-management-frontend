@@ -55,7 +55,7 @@ const DragDropArea = styled(Box)(({ theme, isDragging }) => ({
 }));
 
 const SubmitButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(2),
+  // marginTop: theme.spacing(2),
   padding: theme.spacing(1, 4),
   fontWeight: "bold",
   transition: "all 0.3s ease",
@@ -81,11 +81,14 @@ const Dashboard = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState({});
+  const [isAlreadySetup, setIsAlreadySetup] = useState(false);
 
   useEffect(() => {
     Axios.get("/ads", { withCredentials: true })
       .then((res) => {
         const { banner, title, description, link } = res.data;
+        if (!banner) setIsAlreadySetup(false);
+        else setIsAlreadySetup(true);
         setAdData({
           banner,
           title: title || "",
@@ -250,6 +253,7 @@ const Dashboard = () => {
         enqueueSnackbar("Successfully submitted!", {
           variant: "success",
         });
+        setIsAlreadySetup(true);
       } catch (error) {
         if (
           error &&
@@ -268,6 +272,31 @@ const Dashboard = () => {
       setErrors({});
       setIsLoading(false);
     }
+  };
+
+  const reset = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      await Axios.get("/ads/reset", { withCredentials: true });
+      setAdData({ banner: null, title: "", description: "", link: "" });
+      setIsAlreadySetup(false);
+    } catch (error) {
+      if (
+        error &&
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      )
+        enqueueSnackbar(error.response.data.message, {
+          variant: "error",
+        });
+      else
+        enqueueSnackbar("Server error!", {
+          variant: "error",
+        });
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -357,7 +386,12 @@ const Dashboard = () => {
           />
         </Grid>
       </Grid>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+      <Box
+        display="flex"
+        justifyContent="flex-start"
+        alignItems="center"
+        gap={1}
+      >
         <SubmitButton
           type="submit"
           variant="contained"
@@ -368,6 +402,17 @@ const Dashboard = () => {
         >
           Submit
         </SubmitButton>
+        {isAlreadySetup && (
+          <Button
+            variant="outlined"
+            color="primary"
+            size="large"
+            disabled={isLoading}
+            onClick={reset}
+          >
+            Reset
+          </Button>
+        )}
       </Box>
     </AdSetupForm>
   );
