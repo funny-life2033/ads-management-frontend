@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Axios } from "../../utils";
+import { Axios } from "../../utils/utils";
 import Card from "@mui/material/Card";
 import { CardContent } from "@mui/material";
 
@@ -14,7 +14,7 @@ export default function Authentication() {
         navigate("/company");
       })
       .catch((_) => {});
-  }, []);
+  }, [navigate]);
 
   return (
     <Stack

@@ -13,7 +13,7 @@ import {
 import { styled } from "@mui/system";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import EditIcon from "@mui/icons-material/Edit";
-import { Axios } from "../../utils";
+import { Axios } from "../../utils/utils";
 import { useSnackbar } from "notistack";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({

@@ -1,7 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/system";
-import { Box, TextField, Button, Typography, Paper, Grid } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Grid,
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import { Axios } from "../../utils/utils";
+import { useSnackbar } from "notistack";
 
 const AdSetupForm = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -61,15 +72,63 @@ const ErrorText = styled(Typography)(({ theme }) => ({
 }));
 
 const Dashboard = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [adData, setAdData] = useState({
     banner: null,
     title: "",
     description: "",
     link: "",
   });
+  const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState({});
 
-  const htmlContent = `<!DOCTYPE html>
+  useEffect(() => {
+    Axios.get("/ads", { withCredentials: true })
+      .then((res) => {
+        const { banner, title, description, link } = res.data;
+        setAdData({
+          banner,
+          title: title || "",
+          description: description || "",
+          link: link || "",
+        });
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
+  const getBase64 = async (file) => {
+    return new Promise((res, err) => {
+      if (!file.type || !file.type.startsWith("image/")) err("");
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        res(reader.result);
+      };
+      reader.onerror = () => {
+        err(reader.error);
+      };
+      const blob = new Blob([file], { type: file.type });
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const htmlContent = () => {
+    const src =
+      adData.banner instanceof File
+        ? URL.createObjectURL(adData.banner)
+        : typeof adData.banner === "string"
+          ? adData.banner
+          : "https://images.unsplash.com/photo-1560472355-536de3962603?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80";
+    const title =
+      adData.title && adData.title !== "" ? adData.title : "Smart Ad Title";
+    const description =
+      adData.description && adData.description !== ""
+        ? adData.description
+        : "This is a brief description of the smart advertisement. It showcases the product or service being promoted.";
+
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -77,23 +136,24 @@ const Dashboard = () => {
     <title>Smart Ads Section</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-4">
+<body class="p-4">
     <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl" id="adSection">
         <div class="md:flex">
             <div class="md:flex-shrink-0">
-                <img class="h-48 w-full object-cover md:w-48" src="https://images.unsplash.com/photo-1560472355-536de3962603?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Smart advertisement image" id="adImage">
+                <img class="h-48 w-full object-cover md:w-48" src="${src}" alt="Smart advertisement image" id="adImage">
             </div>
             <div class="p-8">
-                <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold" id="adTitle">Smart Ad Title</div>
-                <p class="mt-2 text-gray-500" id="adDescription">This is a brief description of the smart advertisement. It showcases the product or service being promoted.</p>
+                <div class="uppercase tracking-wide text-sm text-[#F79518] font-semibold" id="adTitle">${title}</div>
+                <p class="mt-2 text-gray-500" id="adDescription">${description}</p>
                 <div class="mt-4">
-                    <a href="#" class="inline-block px-4 py-2 leading-none border rounded text-indigo-600 border-indigo-600 hover:text-white hover:bg-indigo-600 transition-colors duration-300" id="adButton">Learn More</a>
+                    <button href="#" class="inline-block px-4 py-2 leading-none border rounded text-[#F79518] border-[#F79518] hover:text-white hover:bg-[#F79518] transition-colors duration-300" id="adButton">Learn More</button>
                 </div>
             </div>
         </div>
     </div>
 </body>
 </html>`;
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -122,6 +182,7 @@ const Dashboard = () => {
 
   const handleFileInput = (e) => {
     const file = e.target.files[0];
+
     if (file && file.type.startsWith("image/")) {
       setAdData({ ...adData, banner: file });
       setErrors({ ...errors, banner: "" });
@@ -152,10 +213,11 @@ const Dashboard = () => {
     setErrors({ ...errors, [name]: error });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLoading) return;
     const newErrors = {};
-    if (!adData.banner) newErrors.banner = "Banner image is required";
+    // if (!adData.banner) newErrors.banner = "Banner image is required";
     if (!adData.title.trim()) newErrors.title = "Title is required";
     if (!adData.description.trim())
       newErrors.description = "Description is required";
@@ -164,23 +226,66 @@ const Dashboard = () => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      // Submit the form data
-      console.log("Form submitted:", adData);
-      // Reset form after submission
-      setAdData({ banner: null, title: "", description: "", link: "" });
+      setIsLoading(true);
+      const uploadingData = {
+        ...adData,
+        banner: adData.banner
+          ? {
+              base64: null,
+              type: adData.banner.type,
+            }
+          : null,
+      };
+      if (
+        adData.banner &&
+        adData.banner.type &&
+        adData.banner.type.startsWith("image/")
+      )
+        uploadingData.banner.base64 = await getBase64(adData.banner);
+      else uploadingData.banner = null;
+      try {
+        await Axios.post("/ads/submit", uploadingData, {
+          withCredentials: true,
+        });
+        enqueueSnackbar("Successfully submitted!", {
+          variant: "success",
+        });
+      } catch (error) {
+        if (
+          error &&
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        )
+          enqueueSnackbar(error.response.data.message, {
+            variant: "error",
+          });
+        else
+          enqueueSnackbar("Server error!", {
+            variant: "error",
+          });
+      }
       setErrors({});
+      setIsLoading(false);
     }
   };
 
   return (
     <AdSetupForm component="form" onSubmit={handleSubmit}>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={isLoading}
+        onClick={() => {}}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Typography variant="h4" gutterBottom>
         Set Up Your Ad
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <iframe
-            srcDoc={htmlContent}
+            srcDoc={htmlContent()}
             width="100%"
             height="100%"
             title="Iframe with Script"
@@ -205,7 +310,7 @@ const Dashboard = () => {
               <Box display="flex" flexDirection="column" alignItems="center">
                 <FileUploadIcon style={{ color: "#757575", fontSize: 48 }} />
                 <Typography variant="body1" mt={2}>
-                  {adData.banner
+                  {adData.banner && adData.banner.name
                     ? adData.banner.name
                     : "Drag & Drop or Click to Upload Banner"}
                 </Typography>
@@ -258,6 +363,7 @@ const Dashboard = () => {
           variant="contained"
           color="primary"
           size="large"
+          disabled={isLoading}
           startIcon={<FileUploadIcon />}
         >
           Submit

@@ -5,10 +5,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import ForgotPassword from "./ForgotPassword";
+// import ForgotPassword from "./ForgotPassword";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Axios } from "../../utils";
+import { Axios } from "../../utils/utils";
 import { useSnackbar } from "notistack";
 
 const Login = () => {
@@ -20,16 +20,16 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();

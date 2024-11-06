@@ -10,7 +10,7 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { Axios } from "../../utils";
+import { Axios } from "../../utils/utils";
 
 const Register = () => {
   const { enqueueSnackbar } = useSnackbar();

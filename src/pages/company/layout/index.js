@@ -11,18 +11,19 @@ import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
 import { useEffect, useMemo, useState } from "react";
-import { Axios } from "../../../utils";
+import { Axios } from "../../../utils/utils";
 import { useNavigate } from "react-router-dom";
 import Plans from "../subs-plans";
 import Dashboard from "../dashboard";
 import { useSnackbar } from "notistack";
 import Checkout from "../checkout";
+import logo from "../../../utils/icon.png";
 
 const NAVIGATION = [
-  {
-    kind: "header",
-    title: "Main items",
-  },
+  // {
+  //   kind: "header",
+  //   title: "Main items",
+  // },
   {
     segment: "dashboard",
     title: "Dashboard",
@@ -134,6 +135,7 @@ const Layout = ({ window }) => {
       window={demoWindow}
       authentication={{ signOut: logout, signIn: () => {} }}
       session={{ user: companyData }}
+      branding={{ logo: <img src={logo} alt="" />, title: "Vinylbay" }}
     >
       <DashboardLayout>
         <PageContainer>

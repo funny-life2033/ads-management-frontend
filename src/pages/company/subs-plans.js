@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { useEffect, useState } from "react";
-import { Axios } from "../../utils";
+import { Axios } from "../../utils/utils";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import { useSnackbar } from "notistack";
 // import { FaCheck, FaTimes, FaRocket, FaCog, FaCrown } from "react-icons/fa";
