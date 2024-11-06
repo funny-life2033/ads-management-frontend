@@ -187,7 +187,9 @@ const SubcriptionPlans = ({ navigate }) => {
                           ? "Your last payment is on pending now"
                           : plan.nextPaymentDate
                             ? `Your next payment date is ${plan.nextPaymentDate}`
-                            : `Your plan will end on ${plan.endDate}`}
+                            : plan.endDate
+                              ? `Your plan will end on ${plan.endDate}`
+                              : ""}
                       </Typography>
                     </PlanFeature>
                   </Box>

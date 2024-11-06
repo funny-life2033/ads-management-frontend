@@ -59,6 +59,7 @@ const Checkout = ({ productId, navigate }) => {
     firstName: "",
     lastName: "",
     cardNumber: "",
+    cardCode: "",
     expiryDate: "",
     address: "",
     city: "",
@@ -88,7 +89,9 @@ const Checkout = ({ productId, navigate }) => {
               paymentInfo.expiryDate &&
               paymentInfo.expiryDate !== "" &&
               `${paymentInfo.expiryDate.split("-")[1].padStart(2, "0")}/${paymentInfo.expiryDate.split("-")[0].slice(-2)}`,
+            cardCode: "",
           };
+
           setFormData({ ...formData });
           setInitialFormData({ ...formData });
         }
@@ -109,6 +112,7 @@ const Checkout = ({ productId, navigate }) => {
               paymentInfo.expiryDate &&
               paymentInfo.expiryDate !== "" &&
               `${paymentInfo.expiryDate.split("-")[1].padStart(2, "0")}/${paymentInfo.expiryDate.split("-")[0].slice(-2)}`,
+            cardCode: "",
           };
           setFormData({ ...formData });
           setInitialFormData({ ...formData });
@@ -127,6 +131,11 @@ const Checkout = ({ productId, navigate }) => {
         .replace(/(.{4})/g, "$1 ")
         .trim();
       if (formattedValue.length > 19) return;
+    }
+
+    if (name === "cardCode") {
+      console.log(formattedValue);
+      if (formattedValue && formattedValue.length > 4) return;
     }
 
     if (name === "expiryDate") {
@@ -149,6 +158,13 @@ const Checkout = ({ productId, navigate }) => {
           newErrors.cardNumber = "Invalid card number";
         } else {
           delete newErrors.cardNumber;
+        }
+        break;
+      case "cardCode":
+        if (value && (value.length === 4 || value.length === 3)) {
+          delete newErrors.cardCode;
+        } else {
+          newErrors.cardCode = "Invalid card code";
         }
         break;
       case "expiryDate":
@@ -182,6 +198,16 @@ const Checkout = ({ productId, navigate }) => {
             newErrors.cardNumber = "Invalid card number";
           } else {
             delete newErrors.cardNumber;
+          }
+          break;
+        case "cardCode":
+          if (
+            formData[key] &&
+            (formData[key].length === 3 || formData[key].length === 4)
+          ) {
+            delete newErrors.cardCode;
+          } else {
+            newErrors.cardCode = "Invalid card code";
           }
           break;
         case "expiryDate":
@@ -288,7 +314,11 @@ const Checkout = ({ productId, navigate }) => {
                 CreditCard info: {formData.cardNumber} {formData.expiryDate}{" "}
                 <IconButton
                   onClick={() =>
-                    setFormData((data) => ({ ...data, cardNumber: "" }))
+                    setFormData((data) => ({
+                      ...data,
+                      cardNumber: "",
+                      cardCode: "",
+                    }))
                   }
                 >
                   <EditIcon />
@@ -323,6 +353,20 @@ const Checkout = ({ productId, navigate }) => {
                 </Grid>
               </>
             )}
+
+            <Grid item xs={12} sm={6}>
+              <StyledTextField
+                fullWidth
+                label="Card Code"
+                name="cardCode"
+                value={formData.cardCode}
+                onChange={handleChange}
+                error={!!errors.cardCode}
+                helperText={errors.cardCode}
+                inputProps={{ "aria-label": "Card Code" }}
+                type="number"
+              />
+            </Grid>
 
             <Grid item xs={12}>
               Billing Address
