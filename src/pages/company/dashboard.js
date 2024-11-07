@@ -336,8 +336,8 @@ const Dashboard = () => {
               id="banner-upload"
               value={
                 adData.banner && adData.banner instanceof File
-                  ? adData.banner
-                  : null
+                  ? [adData.banner]
+                  : []
               }
             />
             <label htmlFor="banner-upload">
