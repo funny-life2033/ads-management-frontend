@@ -334,6 +334,11 @@ const Dashboard = () => {
               onChange={handleFileInput}
               style={{ display: "none" }}
               id="banner-upload"
+              value={
+                adData.banner && adData.banner instanceof File
+                  ? adData.banner
+                  : null
+              }
             />
             <label htmlFor="banner-upload">
               <Box display="flex" flexDirection="column" alignItems="center">
