@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/system";
 import {
   Box,
@@ -79,6 +79,7 @@ const Dashboard = () => {
     description: "",
     link: "",
   });
+  const bannerInputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [isAlreadySetup, setIsAlreadySetup] = useState(false);
@@ -280,6 +281,7 @@ const Dashboard = () => {
     try {
       await Axios.get("/ads/reset", { withCredentials: true });
       setAdData({ banner: null, title: "", description: "", link: "" });
+      if (bannerInputRef.current) bannerInputRef.current.value = null;
       setIsAlreadySetup(false);
     } catch (error) {
       if (
@@ -334,11 +336,7 @@ const Dashboard = () => {
               onChange={handleFileInput}
               style={{ display: "none" }}
               id="banner-upload"
-              value={
-                adData.banner && adData.banner instanceof File
-                  ? [adData.banner]
-                  : []
-              }
+              ref={bannerInputRef}
             />
             <label htmlFor="banner-upload">
               <Box display="flex" flexDirection="column" alignItems="center">
