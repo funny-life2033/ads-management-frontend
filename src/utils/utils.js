@@ -1,4 +1,4 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:5000";
+const baseURL = "https://vinylbayads.com/api";
 export const Axios = axios.create({ baseURL });
