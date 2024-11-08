@@ -142,7 +142,7 @@ const Dashboard = () => {
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       function redirectToParent(url) {
-        window.parent.location.href = url; // Redirect the parent window
+        window.parent.open(url,'_blank');
       }
     </script>
 </head>
@@ -157,9 +157,9 @@ const Dashboard = () => {
             </div>
             <div class="p-8">
                 <div class="uppercase tracking-wide text-sm text-[#F79518] font-semibold" id="adTitle">${title}</div>
-                <p class="mt-2 text-gray-500" id="adDescription" onclick="redirectToParent('${link}'); return false;">${description}</p>
+                <p class="mt-2 text-gray-500" id="adDescription">${description}</p>
                 <div class="mt-4">
-                    <button class="inline-block px-4 py-2 leading-none border rounded text-[#F79518] border-[#F79518] hover:text-white hover:bg-[#F79518] transition-colors duration-300" id="adButton">Learn More</button>
+                    <button class="inline-block px-4 py-2 leading-none border rounded text-[#F79518] border-[#F79518] hover:text-white hover:bg-[#F79518] transition-colors duration-300" id="adButton" onclick="redirectToParent('${link}'); return false;">Learn More</button>
                 </div>
             </div>
         </div>
