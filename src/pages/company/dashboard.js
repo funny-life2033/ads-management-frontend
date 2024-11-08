@@ -144,7 +144,7 @@ const Dashboard = () => {
     <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl" id="adSection">
         <div class="md:flex">
             <div class="md:flex-shrink-0">
-                <img class="w-full object-cover md:w-48" src="${src}" alt="Smart advertisement image" id="adImage">
+                <img class="w-full h-48 object-top object-cover md:w-48" src="${src}" alt="Smart advertisement image" id="adImage">
             </div>
             <div class="p-8">
                 <div class="uppercase tracking-wide text-sm text-[#F79518] font-semibold" id="adTitle">${title}</div>
