@@ -1,152 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
-import { styled } from "@mui/system";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  Grid,
-  Backdrop,
-  CircularProgress,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-} from "@mui/material";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
-import { Axios } from "../../utils/utils";
-import { useSnackbar } from "notistack";
-
-const AdSetupForm = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  backgroundImage: "linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)",
-  position: "relative",
-}));
-
-const FormField = styled(TextField)(({ theme, error }) => ({
-  marginBottom: theme.spacing(2),
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: error ? theme.palette.error.main : theme.palette.grey[300],
-      borderRadius: theme.shape.borderRadius,
-    },
-    "&:hover fieldset": {
-      borderColor: error
-        ? theme.palette.error.main
-        : theme.palette.primary.main,
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: error
-        ? theme.palette.error.main
-        : theme.palette.primary.main,
-    },
-  },
-}));
-
-const DragDropArea = styled(Box)(({ theme, isDragging }) => ({
-  border: `2px dashed ${isDragging ? theme.palette.primary.main : theme.palette.grey[300]}`,
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(3),
-  textAlign: "center",
-  cursor: "pointer",
-  transition: "all 0.3s ease",
-  "&:hover": {
-    backgroundColor: theme.palette.action.hover,
-  },
-}));
-
-const SubmitButton = styled(Button)(({ theme }) => ({
-  // marginTop: theme.spacing(2),
-  padding: theme.spacing(1, 4),
-  fontWeight: "bold",
-  transition: "all 0.3s ease",
-  "&:hover": {
-    transform: "translateY(-2px)",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  },
-}));
-
-const ErrorText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.error.main,
-  fontSize: "0.75rem",
-  marginTop: theme.spacing(0.5),
-}));
-
-const Dashboard = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const [adData, setAdData] = useState({
-    banner: null,
-    link: "",
-    isVertical: null,
-  });
-  const bannerInputRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errors, setErrors] = useState({});
-  const [isAlreadySetup, setIsAlreadySetup] = useState(false);
-
-  useEffect(() => {
-    Axios.get("/ads", { withCredentials: true })
-      .then((res) => {
-        const { banner, link, isVertical } = res.data;
-        if (!banner) setIsAlreadySetup(false);
-        else setIsAlreadySetup(true);
-        setAdData({
-          banner,
-          link: link || "",
-          isVertical: isVertical,
-        });
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
-  const getBase64 = async (file) => {
-    return new Promise((res, err) => {
-      if (!file.type || !file.type.startsWith("image/")) err("");
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        res(reader.result);
-      };
-      reader.onerror = () => {
-        err(reader.error);
-      };
-      const blob = new Blob([file], { type: file.type });
-      reader.readAsDataURL(blob);
-    });
-  };
-
-  const htmlContent = () => {
-    const src =
-      adData.banner instanceof File
-        ? URL.createObjectURL(adData.banner)
-        : typeof adData.banner === "string"
-          ? adData.banner
-          : "https://images.unsplash.com/photo-1560472355-536de3962603?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80";
-    const link = adData.link;
-    const isVertical = adData.isVertical;
-
-    return `<!doctype html>
+<!doctype html>
+<!-- saved from url=(0187)https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds -->
 <html class="js" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="/utils/product_page_files/slick-theme.min.css" />
-    <link rel="stylesheet" href="/utils/product_page_files/slick.min.css" />
-
-    <script>
-      function redirectToParent(url) {
-        window.parent.open(url,'_blank');
-      }
-    </script>
+    <link rel="stylesheet" href="./product_page_files/slick-theme.min.css" />
+    <link rel="stylesheet" href="./product_page_files/slick.min.css" />
 
     <style data-shopify="">
       @font-face {
@@ -330,13 +191,13 @@ const Dashboard = () => {
     </style>
 
     <link
-      href="/utils/product_page_files/base.css"
+      href="./product_page_files/base.css"
       rel="stylesheet"
       type="text/css"
       media="all"
     />
     <link
-      href="/utils/product_page_files/style.css"
+      href="./product_page_files/style.css"
       rel="stylesheet"
       type="text/css"
       media="all"
@@ -476,6 +337,7 @@ const Dashboard = () => {
     class="template-product setting-buttons-solid"
     data-new-gr-c-s-check-loaded="14.1207.0"
   >
+    <!-- BEGIN sections: header-group -->
     <div
       id="shopify-section-sections--22972339290394__announcement-bar"
       class="shopify-section shopify-section-group-header-group"
@@ -492,7 +354,7 @@ const Dashboard = () => {
         <div class="container">
           <div class="announcement-bar">
             <div class="announcement-bar-left">
-              <a>Questions? Call Us! 516-595-7210 </a>
+              <a href="tel:5165957210">Questions? Call Us! 516-595-7210 </a>
             </div>
 
             <div class="announcement-bar-right">
@@ -501,17 +363,17 @@ const Dashboard = () => {
                 role="list"
               >
                 <li class="navigation-item navigation-item-end">
-                  <a>
+                  <a href="https://vinylbay777.com/pages/get-directions">
                     Get Directions
                   </a>
                 </li>
                 <li class="navigation-item">
-                  <a>
+                  <a href="https://vinylbay777.com/pages/about-us">
                     About us
                   </a>
                 </li>
                 <li class="navigation-item">
-                  <a>
+                  <a href="https://vinylbay777.com/pages/sell-my-collection">
                     Sell My Collection
                   </a>
                 </li>
@@ -527,12 +389,12 @@ const Dashboard = () => {
     >
       <link
         rel="stylesheet"
-        href="/utils/product_page_files/component-predictive-search.css"
+        href="./product_page_files/component-predictive-search.css"
         media="all"
       />
       <link
         rel="stylesheet"
-        href="/utils/product_page_files/component-price.css"
+        href="./product_page_files/component-price.css"
         media="all"
       />
 
@@ -583,8 +445,9 @@ const Dashboard = () => {
                   class="head-row-slot head-row-slot-start head-row-slot-site-branding"
                 >
                   <span class="header-heading h2">
-                    <a><img
-                        src="/utils/product_page_files/Vinyl_Bay_777_logo_1.png"
+                    <a href="https://vinylbay777.com/"
+                      ><img
+                        src="./product_page_files/Vinyl_Bay_777_logo_1.png"
                         srcset="
                           //vinylbay777.com/cdn/shop/files/Vinyl_Bay_777_logo_1.png?v=1719582499&amp;width=160 1x,
                           //vinylbay777.com/cdn/shop/files/Vinyl_Bay_777_logo_1.png?v=1719582499&amp;width=320 2x
@@ -601,7 +464,8 @@ const Dashboard = () => {
                   <nav class="nav-main typography-body">
                     <ul class="navigation-menu navigation-main" role="list">
                       <li class="navigation-item has-sub-menu">
-                        <a    reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                        <a
+                          href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
                         >
                           Shop By Genre
 
@@ -620,10 +484,127 @@ const Dashboard = () => {
                             ></path>
                           </svg>
                         </a>
+
+                        <ul class="navigation-sub-menu color-background-2">
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/rock-pop"
+                            >
+                              Rock &amp; Pop
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/heavy-metal"
+                            >
+                              Heavy Metal
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/hip-hop"
+                            >
+                              Hip Hop
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/blues">
+                              Blues
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/country"
+                            >
+                              Country
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/jazz">
+                              Jazz
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/r-b">
+                              R &amp; B
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/punk">
+                              Punk
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/electronic"
+                            >
+                              Electronic
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/folk">
+                              Folk
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/reggae"
+                            >
+                              Reggae
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/latin">
+                              Latin
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/international"
+                            >
+                              International
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/soundtracks"
+                            >
+                              Soundtracks
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/non-music"
+                            >
+                              Non-Music
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/childrens"
+                            >
+                              Children’s
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/classical"
+                            >
+                              Classical
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/holiday"
+                            >
+                              Holiday
+                            </a>
+                          </li>
+                        </ul>
                       </li>
 
                       <li class="navigation-item has-sub-menu">
-                        <a>
+                        <a href="https://vinylbay777.com/collections/all">
                           Shop
 
                           <svg
@@ -641,28 +622,190 @@ const Dashboard = () => {
                             ></path>
                           </svg>
                         </a>
+
+                        <ul class="navigation-sub-menu color-background-2">
+                          <li class="navigation-item has-sub-menu">
+                            <a href="https://vinylbay777.com/collections/vinyl">
+                              Vinyl
+
+                              <svg
+                                focusable="false"
+                                class="icon icon-angle"
+                                viewBox="0 0 12 8"
+                                role="presentation"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  d="M10 2L6 6 2 2"
+                                  fill="none"
+                                  stroke-linecap="square"
+                                ></path>
+                              </svg>
+                            </a>
+                            <ul class="navigation-sub-menu">
+                              <li class="navigation-item">
+                                <a
+                                  href="https://vinylbay777.com/collections/12-vinyl"
+                                >
+                                  12” Vinyl
+                                </a>
+                              </li>
+                              <li class="navigation-item">
+                                <a
+                                  href="https://vinylbay777.com/collections/10-vinyl"
+                                >
+                                  10” Vinyl
+                                </a>
+                              </li>
+                              <li class="navigation-item">
+                                <a
+                                  href="https://vinylbay777.com/collections/7-vinyl"
+                                >
+                                  7” Vinyl
+                                </a>
+                              </li>
+                            </ul>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/cds">
+                              CDs
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/cassettes"
+                            >
+                              Cassettes
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/dvds">
+                              DVDs &amp; Blu-Rays
+                            </a>
+                          </li>
+                          <li class="navigation-item has-sub-menu">
+                            <a
+                              href="https://vinylbay777.com/collections/apparel"
+                            >
+                              Apparel
+
+                              <svg
+                                focusable="false"
+                                class="icon icon-angle"
+                                viewBox="0 0 12 8"
+                                role="presentation"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  d="M10 2L6 6 2 2"
+                                  fill="none"
+                                  stroke-linecap="square"
+                                ></path>
+                              </svg>
+                            </a>
+                            <ul class="navigation-sub-menu">
+                              <li class="navigation-item">
+                                <a
+                                  href="https://vinylbay777.com/collections/store-merch"
+                                >
+                                  Store Merch
+                                </a>
+                              </li>
+                              <li class="navigation-item">
+                                <a
+                                  href="https://vinylbay777.com/collections/apparel"
+                                >
+                                  All Apparel
+                                </a>
+                              </li>
+                            </ul>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/books">
+                              Books
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a href="https://vinylbay777.com/collections/art">
+                              Art
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/memorabilia"
+                            >
+                              Memorabilia
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/vintage"
+                            >
+                              Vintage
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/collectibles"
+                            >
+                              Collectibles
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/gift-cards"
+                            >
+                              Gift Cards
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/blank-media"
+                            >
+                              Blank Media
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/laserdiscs-1"
+                            >
+                              LaserDiscs
+                            </a>
+                          </li>
+                          <li class="navigation-item">
+                            <a
+                              href="https://vinylbay777.com/collections/wholesale-lots"
+                            >
+                              Wholesale Lots
+                            </a>
+                          </li>
+                        </ul>
                       </li>
 
                       <li class="navigation-item">
-                        <a>
+                        <a
+                          href="https://vinylbay777.com/collections/new-arrival"
+                        >
                           New Arrivals
                         </a>
                       </li>
 
                       <li class="navigation-item">
-                        <a>
+                        <a href="https://vinylbay777.com/collections/on-sale">
                           On Sale
                         </a>
                       </li>
 
                       <li class="navigation-item">
-                        <a>
+                        <a href="https://vinylbay777.com/collections/vault">
                           The Vault
                         </a>
                       </li>
 
                       <li class="navigation-item">
-                        <a>
+                        <a href="https://vinylbay777.com/pages/contact">
                           Contact
                         </a>
                       </li>
@@ -782,6 +925,7 @@ const Dashboard = () => {
                     </header-search-dropdown-modal>
                   </div>
                   <a
+                    href="https://vinylbay777.com/account/login"
                     class="head-slot-item"
                   >
                     <span class="visually-hidden">Log in </span>
@@ -801,25 +945,25 @@ const Dashboard = () => {
                   </a>
                   <div class="head-slot-item">
                     <link
-                      href="/utils/product_page_files/component-drawer.css"
+                      href="./product_page_files/component-drawer.css"
                       rel="stylesheet"
                       type="text/css"
                       media="all"
                     />
                     <link
-                      href="/utils/product_page_files/component-discounts.css"
+                      href="./product_page_files/component-discounts.css"
                       rel="stylesheet"
                       type="text/css"
                       media="all"
                     />
                     <link
                       rel="stylesheet"
-                      href="/utils/product_page_files/component-cart-items.css"
+                      href="./product_page_files/component-cart-items.css"
                       media="all"
                     />
                     <link
                       rel="stylesheet"
-                      href="/utils/product_page_files/component-header-mini-cart.css"
+                      href="./product_page_files/component-header-mini-cart.css"
                       media="all"
                     />
 
@@ -848,6 +992,7 @@ const Dashboard = () => {
                         data-event-prefix="header-cart"
                       >
                         <a
+                          href="https://vinylbay777.com/cart"
                           class="head-slot-cart-link dropdown-modal-toggle"
                           aria-expanded="false"
                         >
@@ -973,7 +1118,7 @@ const Dashboard = () => {
                             <li class="navigation-mobile-item">
                               <span class="navigation-mobile-item-link">
                                 <a
-                                  reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                  href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
                                 >
                                   Shop By Genre </a
                                 ><button
@@ -997,126 +1142,162 @@ const Dashboard = () => {
                               <ul class="navigation-sub-menu">
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/rock-pop"
+                                    >
                                       Rock &amp; Pop
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/heavy-metal"
+                                    >
                                       Heavy Metal
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/hip-hop"
+                                    >
                                       Hip Hop
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/blues"
+                                    >
                                       Blues
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/country"
+                                    >
                                       Country
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/jazz"
+                                    >
                                       Jazz
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/r-b"
+                                    >
                                       R &amp; B
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/punk"
+                                    >
                                       Punk
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/electronic"
+                                    >
                                       Electronic
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/folk"
+                                    >
                                       Folk
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/reggae"
+                                    >
                                       Reggae
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/latin"
+                                    >
                                       Latin
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/international"
+                                    >
                                       International
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/soundtracks"
+                                    >
                                       Soundtracks
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/non-music"
+                                    >
                                       Non-Music
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/childrens"
+                                    >
                                       Children’s
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/classical"
+                                    >
                                       Classical
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/holiday"
+                                    >
                                       Holiday
                                     </a></span
                                   >
@@ -1125,7 +1306,9 @@ const Dashboard = () => {
                             </li>
                             <li class="navigation-mobile-item">
                               <span class="navigation-mobile-item-link">
-                                <a>
+                                <a
+                                  href="https://vinylbay777.com/collections/all"
+                                >
                                   Shop </a
                                 ><button
                                   class="navigation-mobile-item-link-expand"
@@ -1148,7 +1331,9 @@ const Dashboard = () => {
                               <ul class="navigation-sub-menu">
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/vinyl"
+                                    >
                                       Vinyl </a
                                     ><button
                                       class="navigation-mobile-item-link-expand"
@@ -1171,21 +1356,27 @@ const Dashboard = () => {
                                   <ul class="navigation-sub-menu">
                                     <li class="navigation-mobile-item">
                                       <span class="navigation-mobile-item-link">
-                                        <a>
+                                        <a
+                                          href="https://vinylbay777.com/collections/12-vinyl"
+                                        >
                                           12” Vinyl
                                         </a>
                                       </span>
                                     </li>
                                     <li class="navigation-mobile-item">
                                       <span class="navigation-mobile-item-link">
-                                        <a>
+                                        <a
+                                          href="https://vinylbay777.com/collections/10-vinyl"
+                                        >
                                           10” Vinyl
                                         </a>
                                       </span>
                                     </li>
                                     <li class="navigation-mobile-item">
                                       <span class="navigation-mobile-item-link">
-                                        <a>
+                                        <a
+                                          href="https://vinylbay777.com/collections/7-vinyl"
+                                        >
                                           7” Vinyl
                                         </a>
                                       </span>
@@ -1194,28 +1385,36 @@ const Dashboard = () => {
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/cds"
+                                    >
                                       CDs
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/cassettes"
+                                    >
                                       Cassettes
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/dvds"
+                                    >
                                       DVDs &amp; Blu-Rays
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/apparel"
+                                    >
                                       Apparel </a
                                     ><button
                                       class="navigation-mobile-item-link-expand"
@@ -1238,14 +1437,18 @@ const Dashboard = () => {
                                   <ul class="navigation-sub-menu">
                                     <li class="navigation-mobile-item">
                                       <span class="navigation-mobile-item-link">
-                                        <a>
+                                        <a
+                                          href="https://vinylbay777.com/collections/store-merch"
+                                        >
                                           Store Merch
                                         </a>
                                       </span>
                                     </li>
                                     <li class="navigation-mobile-item">
                                       <span class="navigation-mobile-item-link">
-                                        <a>
+                                        <a
+                                          href="https://vinylbay777.com/collections/apparel"
+                                        >
                                           All Apparel
                                         </a>
                                       </span>
@@ -1254,63 +1457,81 @@ const Dashboard = () => {
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/books"
+                                    >
                                       Books
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/art"
+                                    >
                                       Art
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/memorabilia"
+                                    >
                                       Memorabilia
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/vintage"
+                                    >
                                       Vintage
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/collectibles"
+                                    >
                                       Collectibles
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/gift-cards"
+                                    >
                                       Gift Cards
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/blank-media"
+                                    >
                                       Blank Media
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/laserdiscs-1"
+                                    >
                                       LaserDiscs
                                     </a></span
                                   >
                                 </li>
                                 <li class="navigation-mobile-item">
                                   <span class="navigation-mobile-item-link">
-                                    <a>
+                                    <a
+                                      href="https://vinylbay777.com/collections/wholesale-lots"
+                                    >
                                       Wholesale Lots
                                     </a></span
                                   >
@@ -1319,28 +1540,34 @@ const Dashboard = () => {
                             </li>
                             <li class="navigation-mobile-item">
                               <span class="navigation-mobile-item-link">
-                                <a>
+                                <a
+                                  href="https://vinylbay777.com/collections/new-arrival"
+                                >
                                   New Arrivals
                                 </a></span
                               >
                             </li>
                             <li class="navigation-mobile-item">
                               <span class="navigation-mobile-item-link">
-                                <a>
+                                <a
+                                  href="https://vinylbay777.com/collections/on-sale"
+                                >
                                   On Sale
                                 </a></span
                               >
                             </li>
                             <li class="navigation-mobile-item">
                               <span class="navigation-mobile-item-link">
-                                <a>
+                                <a
+                                  href="https://vinylbay777.com/collections/vault"
+                                >
                                   The Vault
                                 </a></span
                               >
                             </li>
                             <li class="navigation-mobile-item">
                               <span class="navigation-mobile-item-link">
-                                <a>
+                                <a href="https://vinylbay777.com/pages/contact">
                                   Contact
                                 </a></span
                               >
@@ -1352,13 +1579,347 @@ const Dashboard = () => {
                           <div class="mobile-menu-utility-section">
                             <div class="mobile-menu-region-currency">
                               <link
-                                href="/utils/product_page_files/component-dropdown.css"
+                                href="./product_page_files/component-dropdown.css"
                                 rel="stylesheet"
                                 type="text/css"
                                 media="all"
                               />
 
-                              
+                              <localization-form
+                                ><form
+                                  method="post"
+                                  action="https://vinylbay777.com/localization"
+                                  id="HeaderCountryFormMobileMenu"
+                                  accept-charset="UTF-8"
+                                  class="localization-form"
+                                  enctype="multipart/form-data"
+                                >
+                                  <input
+                                    type="hidden"
+                                    name="form_type"
+                                    value="localization"
+                                  /><input
+                                    type="hidden"
+                                    name="utf8"
+                                    value="✓"
+                                  /><input
+                                    type="hidden"
+                                    name="_method"
+                                    value="put"
+                                  /><input
+                                    type="hidden"
+                                    name="return_to"
+                                    value="/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds"
+                                  />
+                                  <div
+                                    class="no-js-hidden dropdown dropdown-left dropdown-up dropdown-toggle-button"
+                                  >
+                                    <h2
+                                      class="visually-hidden"
+                                      id="HeaderCountryLabelMobileMenu"
+                                    >
+                                      Country/region
+                                    </h2>
+                                    <button
+                                      class="dropdown-toggle"
+                                      type="button"
+                                      aria-expanded="false"
+                                      aria-controls="HeaderCountryListMobileMenu"
+                                      aria-describedby="HeaderCountryLabelMobileMenu"
+                                    >
+                                      <span class="dropdown-toggle-label"
+                                        >US (USD $)</span
+                                      >
+
+                                      <svg
+                                        focusable="false"
+                                        class="icon icon-angle"
+                                        viewBox="0 0 12 8"
+                                        role="presentation"
+                                      >
+                                        <path
+                                          stroke="currentColor"
+                                          stroke-width="2"
+                                          d="M10 2L6 6 2 2"
+                                          fill="none"
+                                          stroke-linecap="square"
+                                        ></path>
+                                      </svg>
+                                    </button>
+
+                                    <div
+                                      class="dropdown-list-wrap color-background-2"
+                                      aria-hidden="true"
+                                    >
+                                      <div class="dropdown-list-wrap-scroll">
+                                        <ul
+                                          class="dropdown-list"
+                                          id="HeaderCountryListMobileMenu"
+                                          role="list"
+                                        >
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="AU"
+                                            >
+                                              Australia (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="AT"
+                                            >
+                                              Austria (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="BE"
+                                            >
+                                              Belgium (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="CA"
+                                            >
+                                              Canada (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="CZ"
+                                            >
+                                              Czechia (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="DK"
+                                            >
+                                              Denmark (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="FI"
+                                            >
+                                              Finland (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="FR"
+                                            >
+                                              France (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="DE"
+                                            >
+                                              Germany (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="HK"
+                                            >
+                                              Hong Kong SAR (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="IE"
+                                            >
+                                              Ireland (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="IL"
+                                            >
+                                              Israel (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="IT"
+                                            >
+                                              Italy (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="JP"
+                                            >
+                                              Japan (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="MY"
+                                            >
+                                              Malaysia (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="NL"
+                                            >
+                                              Netherlands (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="NZ"
+                                            >
+                                              New Zealand (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="NO"
+                                            >
+                                              Norway (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="PL"
+                                            >
+                                              Poland (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="PT"
+                                            >
+                                              Portugal (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="SG"
+                                            >
+                                              Singapore (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="KR"
+                                            >
+                                              South Korea (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="ES"
+                                            >
+                                              Spain (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="SE"
+                                            >
+                                              Sweden (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="CH"
+                                            >
+                                              Switzerland (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="AE"
+                                            >
+                                              United Arab Emirates (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="GB"
+                                            >
+                                              United Kingdom (USD $)
+                                            </a>
+                                          </li>
+                                          <li class="dropdown-list-item">
+                                            <a
+                                              class="dropdown-list-option"
+                                              href="https://vinylbay777.com/products/reinhold-gliere-all-union-radio-orchestra-miroshnichenko-bolshoi-theatre-orchestra-ermler-gliere-conducts-gliere-symphony-no-2-1995-81-3002-new-sealed-cds#"
+                                              data-value="US"
+                                            >
+                                              United States (USD $)
+                                            </a>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+
+                                    <input
+                                      type="hidden"
+                                      name="country_code"
+                                      value="US"
+                                    />
+                                  </div></form
+                              ></localization-form>
 
                               <noscript
                                 ><form
@@ -1489,6 +2050,7 @@ const Dashboard = () => {
         </header>
       </sticky-header>
     </div>
+    <!-- END sections: header-group -->
 
     <main id="MainContent" class="main focus-none" role="main" tabindex="-1">
       <div
@@ -1496,43 +2058,43 @@ const Dashboard = () => {
         class="shopify-section product-info-wrap"
       >
         <link
-          href="/utils/product_page_files/section-main-product.css"
+          href="./product_page_files/section-main-product.css"
           rel="stylesheet"
           type="text/css"
           media="all"
         />
         <link
-          href="/utils/product_page_files/component-price.css"
+          href="./product_page_files/component-price.css"
           rel="stylesheet"
           type="text/css"
           media="all"
         />
         <link
-          href="/utils/product_page_files/component-facets.css"
+          href="./product_page_files/component-facets.css"
           rel="stylesheet"
           type="text/css"
           media="all"
         />
         <link
-          href="/utils/product_page_files/component-rating.css"
+          href="./product_page_files/component-rating.css"
           rel="stylesheet"
           type="text/css"
           media="all"
         />
         <link
-          href="/utils/product_page_files/component-pills.css"
+          href="./product_page_files/component-pills.css"
           rel="stylesheet"
           type="text/css"
           media="all"
         />
         <link
-          href="/utils/product_page_files/component-tabs.css"
+          href="./product_page_files/component-tabs.css"
           rel="stylesheet"
           type="text/css"
           media="all"
         />
         <link
-          href="/utils/product_page_files/component-tooltip.css"
+          href="./product_page_files/component-tooltip.css"
           rel="stylesheet"
           type="text/css"
           media="all"
@@ -1540,12 +2102,12 @@ const Dashboard = () => {
 
         <link
           rel="stylesheet"
-          href="/utils/product_page_files/component-reviews.css"
+          href="./product_page_files/component-reviews.css"
           media="all"
         />
         <link
           rel="stylesheet"
-          href="/utils/product_page_files/component-deferred-media.css"
+          href="./product_page_files/component-deferred-media.css"
           media="all"
         />
 
@@ -1556,6 +2118,13 @@ const Dashboard = () => {
             type="text/css"
             media="all"
         /></noscript>
+
+        <script>
+          function resizeIframe(iframe) {
+            iframe.style.height =
+              iframe.contentWindow.document.body.scrollHeight + "px";
+          }
+        </script>
         <style>
           #shopify-section-template--22972339028250__main
             > .container
@@ -1654,7 +2223,7 @@ const Dashboard = () => {
                                     style="--ratio-percent: 93.44344344344343%"
                                   >
                                     <img
-                                      src="/utils/product_page_files/9d21e6ec455025b3eca50972ccfabf0b.jpg"
+                                      src="./product_page_files/9d21e6ec455025b3eca50972ccfabf0b.jpg"
                                       alt=""
                                       srcset="
                                         //vinylbay777.com/cdn/shop/files/9d21e6ec455025b3eca50972ccfabf0b.jpg?v=1731469891&amp;width=200   200w,
@@ -1746,7 +2315,7 @@ const Dashboard = () => {
                                     style="--ratio-percent: 90.08428358948935%"
                                   >
                                     <img
-                                      src="/utils/product_page_files/f0b19bd6d49b7a7f5542408c20e4ed3f.jpg"
+                                      src="./product_page_files/f0b19bd6d49b7a7f5542408c20e4ed3f.jpg"
                                       alt=""
                                       srcset="
                                         //vinylbay777.com/cdn/shop/files/f0b19bd6d49b7a7f5542408c20e4ed3f.jpg?v=1731469891&amp;width=200   200w,
@@ -1836,7 +2405,7 @@ const Dashboard = () => {
                           style="--ratio-percent: 100%"
                         >
                           <img
-                            src="/utils/product_page_files/9d21e6ec455025b3eca50972ccfabf0b(1).jpg"
+                            src="./product_page_files/9d21e6ec455025b3eca50972ccfabf0b(1).jpg"
                             alt=""
                             srcset="
                               //vinylbay777.com/cdn/shop/files/9d21e6ec455025b3eca50972ccfabf0b.jpg?v=1731469891&amp;width=48   48w,
@@ -1902,7 +2471,7 @@ const Dashboard = () => {
                           style="--ratio-percent: 100%"
                         >
                           <img
-                            src="/utils/product_page_files/f0b19bd6d49b7a7f5542408c20e4ed3f(1).jpg"
+                            src="./product_page_files/f0b19bd6d49b7a7f5542408c20e4ed3f(1).jpg"
                             alt=""
                             srcset="
                               //vinylbay777.com/cdn/shop/files/f0b19bd6d49b7a7f5542408c20e4ed3f.jpg?v=1731469891&amp;width=48   48w,
@@ -1954,6 +2523,7 @@ const Dashboard = () => {
                   <div class="product-info-main">
                     <div class="product-info-eyebrow">
                       <a
+                        href="https://vinylbay777.com/collections/vendors?q=Consonance"
                         title="Consonance"
                         >Consonance</a
                       >
@@ -2055,13 +2625,13 @@ const Dashboard = () => {
                   </div>
 
                   <link
-                    href="/utils/product_page_files/component-drawer.css"
+                    href="./product_page_files/component-drawer.css"
                     rel="stylesheet"
                     type="text/css"
                     media="all"
                   />
                   <link
-                    href="/utils/product_page_files/component-pickup-availability.css"
+                    href="./product_page_files/component-pickup-availability.css"
                     rel="stylesheet"
                     type="text/css"
                     media="all"
@@ -2335,7 +2905,20 @@ const Dashboard = () => {
                   </ul>
                 </div>
 
-                ${isVertical === true ? `<img src="${src}" width="400" height="auto" id="banner_vertical" style="cursor: pointer; margin-bottom: 30px; margin-left: auto; margin-right: auto;" onclick="redirectToParent('${link}'); return false;" />` : ""}
+                <iframe
+                  width="400"
+                  class="iframe--template--22972339028250__main"
+                  height="0"
+                  style="
+                    border: none;
+                    background-color: rgba(0, 0, 0, 0);
+                    margin: auto;
+                    width: 400px !important;
+                    height: 423px;
+                  "
+                  onload="resizeIframe(this)"
+                  src="./product_page_files/saved_resource.html"
+                ></iframe>
               </div>
 
               <div class="product-info-description">
@@ -2396,23 +2979,43 @@ const Dashboard = () => {
               </div>
             </div>
             <div class="vinylbay-ads">
-              ${isVertical === false ? `<img id="banner_horizontal" src="${src}" height="auto" width="auto" style="cursor: pointer; margin-top: 20px;" onclick="redirectToParent('${link}'); return false;" />` : ""}
+              <iframe
+                class="iframe--template--22972339028250__main"
+                height="0"
+                style="
+                  border: none;
+                  background-color: rgba(0, 0, 0, 0);
+                  width: 400px !important;
+                  height: 529px;
+                "
+                onload="resizeIframe(this)"
+                src="./product_page_files/saved_resource(1).html"
+              ></iframe>
+              <iframe
+                class="iframe--template--22972339028250__main"
+                height="0"
+                style="
+                  border: none;
+                  background-color: rgba(0, 0, 0, 0);
+                  width: 400px !important;
+                  height: 529px;
+                "
+                onload="resizeIframe(this)"
+                src="./product_page_files/saved_resource(2).html"
+              ></iframe>
+              <iframe
+                class="iframe--template--22972339028250__main"
+                height="0"
+                style="
+                  border: none;
+                  background-color: rgba(0, 0, 0, 0);
+                  width: 400px !important;
+                  height: 8px;
+                "
+                onload="resizeIframe(this)"
+                src="./product_page_files/saved_resource(3).html"
+              ></iframe>
             </div>
-            <script>
-              const adjustHorizontalImageHeight = () => {
-                const horizontalImage = document.getElementById("banner_horizontal");
-                const verticalImage = document.querySelector("div.product-info-details");
-
-                if(verticalImage.offsetWidth < 400) {
-                  horizontalImage.style.height = verticalImage.offsetWidth + 'px';
-                } else {
-                 horizontalImage.style.height = '400px';
-                }
-              }
-
-              window.onload = adjustHorizontalImageHeight;
-              window.onresize = adjustHorizontalImageHeight;
-            </script>
           </div>
         </div>
       </div>
@@ -2422,17 +3025,17 @@ const Dashboard = () => {
       >
         <link
           rel="stylesheet"
-          href="/utils/product_page_files/component-card.css"
+          href="./product_page_files/component-card.css"
           media="all"
         />
         <link
           rel="stylesheet"
-          href="/utils/product_page_files/component-price.css"
+          href="./product_page_files/component-price.css"
           media="all"
         />
         <link
           rel="stylesheet"
-          href="/utils/product_page_files/component-scroller.css"
+          href="./product_page_files/component-scroller.css"
           media="all"
         />
 
@@ -2490,23 +3093,788 @@ const Dashboard = () => {
           }
         </style>
 
-        
+        <div class="color-background-1">
+          <div class="container">
+            <div class="block-section">
+              <product-recommendations
+                class="product-recommendations product-recommendations-loaded"
+                data-url="/recommendations/products?section_id=template--22972339028250__recommendations&amp;product_id=9677669499162&amp;limit=4"
+              >
+                <div class="block-block-section-title-wrapper">
+                  <h2 class="block-section-title">Related products</h2>
+                </div>
+
+                <div class="scroller scroller-tablet">
+                  <div class="scroller-inner">
+                    <ul class="grid grid-3-col-tablet grid-4-col-desktop">
+                      <li class="grid-item">
+                        <link
+                          href="./product_page_files/component-rating.css"
+                          rel="stylesheet"
+                          type="text/css"
+                          media="all"
+                        />
+
+                        <product-card
+                          class="card card-product card-product-no-rating color-background-2"
+                        >
+                          <figure class="card-media">
+                            <a
+                              href="https://vinylbay777.com/products/12-2xlp-ex-bauhaus-1979-1983-1985-beggars-banquet-uk-import-bega-64?pr_prod_strat=collection_fallback&amp;pr_rec_id=0c87af7b3&amp;pr_rec_pid=9555071729946&amp;pr_ref_pid=9677669499162&amp;pr_seq=uniform"
+                              class="js-product-link"
+                            >
+                              <div
+                                class="aspect-ratio"
+                                style="--ratio-percent: 125%"
+                              >
+                                <img
+                                  src="./product_page_files/10_903fb0d2-377e-4a7b-9c71-f2e936d9e3fb.jpg"
+                                  alt='12" 2xLP EX Bauhaus 1979-1983 1985 Beggars Banquet UK Import BEGA 64'
+                                  srcset="
+                                    //vinylbay777.com/cdn/shop/files/10_903fb0d2-377e-4a7b-9c71-f2e936d9e3fb.jpg?v=1724203256&amp;width=185 185w,
+                                    //vinylbay777.com/cdn/shop/files/10_903fb0d2-377e-4a7b-9c71-f2e936d9e3fb.jpg?v=1724203256&amp;width=200 200w,
+                                    //vinylbay777.com/cdn/shop/files/10_903fb0d2-377e-4a7b-9c71-f2e936d9e3fb.jpg?v=1724203256&amp;width=370 370w,
+                                    //vinylbay777.com/cdn/shop/files/10_903fb0d2-377e-4a7b-9c71-f2e936d9e3fb.jpg?v=1724203256&amp;width=420 420w,
+                                    //vinylbay777.com/cdn/shop/files/10_903fb0d2-377e-4a7b-9c71-f2e936d9e3fb.jpg?v=1724203256&amp;width=650 650w,
+                                    //vinylbay777.com/cdn/shop/files/10_903fb0d2-377e-4a7b-9c71-f2e936d9e3fb.jpg?v=1724203256&amp;width=750 750w,
+                                    //vinylbay777.com/cdn/shop/files/10_903fb0d2-377e-4a7b-9c71-f2e936d9e3fb.jpg?v=1724203256&amp;width=950 950w
+                                  "
+                                  width="950"
+                                  height="1267"
+                                  loading="lazy"
+                                  class="card-media-image"
+                                  sizes="
+			
+				(min-width: 1200px) 420px, (min-width: 750px) calc((100vw - 4rem - 3rem) / 3), calc(100vw - 3rem - 1rem)
+			
+		
+"
+                                  data-xblocker="passed"
+                                  style="visibility: visible"
+                                />
+
+                                <img
+                                  src="./product_page_files/10_1df1772c-f5dd-4525-8109-72c1a0ef9970.jpg"
+                                  alt='12" 2xLP EX Bauhaus 1979-1983 1985 Beggars Banquet UK Import BEGA 64'
+                                  srcset="
+                                    //vinylbay777.com/cdn/shop/files/10_1df1772c-f5dd-4525-8109-72c1a0ef9970.jpg?v=1724203256&amp;width=185 185w,
+                                    //vinylbay777.com/cdn/shop/files/10_1df1772c-f5dd-4525-8109-72c1a0ef9970.jpg?v=1724203256&amp;width=200 200w,
+                                    //vinylbay777.com/cdn/shop/files/10_1df1772c-f5dd-4525-8109-72c1a0ef9970.jpg?v=1724203256&amp;width=370 370w,
+                                    //vinylbay777.com/cdn/shop/files/10_1df1772c-f5dd-4525-8109-72c1a0ef9970.jpg?v=1724203256&amp;width=420 420w,
+                                    //vinylbay777.com/cdn/shop/files/10_1df1772c-f5dd-4525-8109-72c1a0ef9970.jpg?v=1724203256&amp;width=650 650w,
+                                    //vinylbay777.com/cdn/shop/files/10_1df1772c-f5dd-4525-8109-72c1a0ef9970.jpg?v=1724203256&amp;width=750 750w,
+                                    //vinylbay777.com/cdn/shop/files/10_1df1772c-f5dd-4525-8109-72c1a0ef9970.jpg?v=1724203256&amp;width=950 950w
+                                  "
+                                  width="950"
+                                  height="1267"
+                                  loading="lazy"
+                                  class="card-media-image"
+                                  sizes="
+			
+				(min-width: 1200px) 420px, (min-width: 750px) calc((100vw - 4rem - 3rem) / 3), calc(100vw - 3rem - 1rem)
+			
+		
+"
+                                  data-xblocker="passed"
+                                  style="visibility: visible"
+                                />
+                              </div>
+                            </a>
+                          </figure>
+
+                          <div class="card-info-wrap">
+                            <div class="card-info">
+                              <div class="card-eyebrow">
+                                <a
+                                  href="https://vinylbay777.com/collections/vendors?q=Beggars%20Banquet"
+                                  title="Beggars Banquet"
+                                  >Beggars Banquet</a
+                                >
+                              </div>
+
+                              <h3 class="card-heading typography-body">
+                                <a
+                                  href="https://vinylbay777.com/products/12-2xlp-ex-bauhaus-1979-1983-1985-beggars-banquet-uk-import-bega-64?pr_prod_strat=collection_fallback&amp;pr_rec_id=0c87af7b3&amp;pr_rec_pid=9555071729946&amp;pr_ref_pid=9677669499162&amp;pr_seq=uniform"
+                                  class="js-product-link"
+                                >
+                                  12" 2xLP EX Bauhaus 1979-1983 1985 Beggars
+                                  Banquet UK Import BEGA 64</a
+                                >
+                              </h3>
+
+                              <div class="badge-stock badge-stock-in">
+                                <span class="badge-stock-icon"></span> In stock
+                              </div>
+                            </div>
+
+                            <div class="card-footer">
+                              <div class="price">
+                                <div class="price-container">
+                                  <div class="price-regular">
+                                    <span class="visually-hidden"
+                                      >Regular price</span
+                                    >
+                                    <span class="price-item price-item-regular">
+                                      $70.00
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="card-floating-footer">
+                                <product-form>
+                                  <form
+                                    method="post"
+                                    action="https://vinylbay777.com/cart/add"
+                                    id="product-form-9555071729946"
+                                    accept-charset="UTF-8"
+                                    class="shopify-product-form"
+                                    enctype="multipart/form-data"
+                                    novalidate="novalidate"
+                                    data-type="add-to-cart-form"
+                                    data-stock-threshold="0"
+                                    data-event-context="ProductRecommendations"
+                                  >
+                                    <input
+                                      type="hidden"
+                                      name="form_type"
+                                      value="product"
+                                    /><input
+                                      type="hidden"
+                                      name="utf8"
+                                      value="✓"
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="id"
+                                      value="49524241531162"
+                                    />
+                                    <div
+                                      class="product-actions card-product-actions"
+                                    >
+                                      <div class="product-actions-add-to-cart">
+                                        <button
+                                          type="submit"
+                                          name="add"
+                                          class="button button-secondary button-add-to-cart button-solid"
+                                        >
+                                          <span>Add to cart</span>
+                                          <div
+                                            class="button-overlay-spinner hidden"
+                                          >
+                                            <span class="spinner-xs"></span>
+                                          </div>
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="product-form-error-message-wrapper form-status form-status-error"
+                                      role="alert"
+                                      hidden=""
+                                    >
+                                      <span
+                                        class="product-form-error-message"
+                                      ></span>
+                                    </div>
+                                    <input
+                                      type="hidden"
+                                      name="product-id"
+                                      value="9555071729946"
+                                    /><input
+                                      type="hidden"
+                                      name="section-id"
+                                      value="template--22972339028250__recommendations"
+                                    />
+                                  </form>
+                                </product-form>
+                              </div>
+                            </div>
+                          </div>
+                        </product-card>
+                      </li>
+                      <li class="grid-item">
+                        <link
+                          href="./product_page_files/component-rating.css"
+                          rel="stylesheet"
+                          type="text/css"
+                          media="all"
+                        />
+
+                        <product-card
+                          class="card card-product card-product-no-rating color-background-2"
+                        >
+                          <figure class="card-media">
+                            <a
+                              href="https://vinylbay777.com/products/12-2xlp-ex-big-pun-yeeeah-baby-2000-loud-records-parental-advisory-c2-63843?pr_prod_strat=collection_fallback&amp;pr_rec_id=0c87af7b3&amp;pr_rec_pid=9555080413466&amp;pr_ref_pid=9677669499162&amp;pr_seq=uniform"
+                              class="js-product-link"
+                            >
+                              <div
+                                class="aspect-ratio"
+                                style="--ratio-percent: 125%"
+                              >
+                                <img
+                                  src="./product_page_files/10_e16388e3-28a6-4c94-b293-f8bf8745d56a.jpg"
+                                  alt='12" 2xLP EX Big Pun Yeeeah Baby 2000 Loud Records Parental Advisory C2 63843'
+                                  srcset="
+                                    //vinylbay777.com/cdn/shop/files/10_e16388e3-28a6-4c94-b293-f8bf8745d56a.jpg?v=1724203718&amp;width=185 185w,
+                                    //vinylbay777.com/cdn/shop/files/10_e16388e3-28a6-4c94-b293-f8bf8745d56a.jpg?v=1724203718&amp;width=200 200w,
+                                    //vinylbay777.com/cdn/shop/files/10_e16388e3-28a6-4c94-b293-f8bf8745d56a.jpg?v=1724203718&amp;width=370 370w,
+                                    //vinylbay777.com/cdn/shop/files/10_e16388e3-28a6-4c94-b293-f8bf8745d56a.jpg?v=1724203718&amp;width=420 420w,
+                                    //vinylbay777.com/cdn/shop/files/10_e16388e3-28a6-4c94-b293-f8bf8745d56a.jpg?v=1724203718&amp;width=650 650w,
+                                    //vinylbay777.com/cdn/shop/files/10_e16388e3-28a6-4c94-b293-f8bf8745d56a.jpg?v=1724203718&amp;width=750 750w,
+                                    //vinylbay777.com/cdn/shop/files/10_e16388e3-28a6-4c94-b293-f8bf8745d56a.jpg?v=1724203718&amp;width=950 950w
+                                  "
+                                  width="950"
+                                  height="1267"
+                                  loading="lazy"
+                                  class="card-media-image"
+                                  sizes="
+			
+				(min-width: 1200px) 420px, (min-width: 750px) calc((100vw - 4rem - 3rem) / 3), calc(100vw - 3rem - 1rem)
+			
+		
+"
+                                  data-xblocker="passed"
+                                  style="visibility: visible"
+                                />
+
+                                <img
+                                  src="./product_page_files/10_f2401337-deac-4767-9beb-00bb2861ed84.jpg"
+                                  alt='12" 2xLP EX Big Pun Yeeeah Baby 2000 Loud Records Parental Advisory C2 63843'
+                                  srcset="
+                                    //vinylbay777.com/cdn/shop/files/10_f2401337-deac-4767-9beb-00bb2861ed84.jpg?v=1724203718&amp;width=185 185w,
+                                    //vinylbay777.com/cdn/shop/files/10_f2401337-deac-4767-9beb-00bb2861ed84.jpg?v=1724203718&amp;width=200 200w,
+                                    //vinylbay777.com/cdn/shop/files/10_f2401337-deac-4767-9beb-00bb2861ed84.jpg?v=1724203718&amp;width=370 370w,
+                                    //vinylbay777.com/cdn/shop/files/10_f2401337-deac-4767-9beb-00bb2861ed84.jpg?v=1724203718&amp;width=420 420w,
+                                    //vinylbay777.com/cdn/shop/files/10_f2401337-deac-4767-9beb-00bb2861ed84.jpg?v=1724203718&amp;width=650 650w,
+                                    //vinylbay777.com/cdn/shop/files/10_f2401337-deac-4767-9beb-00bb2861ed84.jpg?v=1724203718&amp;width=750 750w,
+                                    //vinylbay777.com/cdn/shop/files/10_f2401337-deac-4767-9beb-00bb2861ed84.jpg?v=1724203718&amp;width=950 950w
+                                  "
+                                  width="950"
+                                  height="1267"
+                                  loading="lazy"
+                                  class="card-media-image"
+                                  sizes="
+			
+				(min-width: 1200px) 420px, (min-width: 750px) calc((100vw - 4rem - 3rem) / 3), calc(100vw - 3rem - 1rem)
+			
+		
+"
+                                  data-xblocker="passed"
+                                  style="visibility: visible"
+                                />
+                              </div>
+                            </a>
+                          </figure>
+
+                          <div class="card-info-wrap">
+                            <div class="card-info">
+                              <div class="card-eyebrow">
+                                <a
+                                  href="https://vinylbay777.com/collections/vendors?q=Loud%20Records"
+                                  title="Loud Records"
+                                  >Loud Records</a
+                                >
+                              </div>
+
+                              <h3 class="card-heading typography-body">
+                                <a
+                                  href="https://vinylbay777.com/products/12-2xlp-ex-big-pun-yeeeah-baby-2000-loud-records-parental-advisory-c2-63843?pr_prod_strat=collection_fallback&amp;pr_rec_id=0c87af7b3&amp;pr_rec_pid=9555080413466&amp;pr_ref_pid=9677669499162&amp;pr_seq=uniform"
+                                  class="js-product-link"
+                                >
+                                  12" 2xLP EX Big Pun Yeeeah Baby 2000 Loud
+                                  Records Parental Advisory C2 63843</a
+                                >
+                              </h3>
+
+                              <div class="badge-stock badge-stock-in">
+                                <span class="badge-stock-icon"></span> In stock
+                              </div>
+                            </div>
+
+                            <div class="card-footer">
+                              <div class="price">
+                                <div class="price-container">
+                                  <div class="price-regular">
+                                    <span class="visually-hidden"
+                                      >Regular price</span
+                                    >
+                                    <span class="price-item price-item-regular">
+                                      $95.00
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="card-floating-footer">
+                                <product-form>
+                                  <form
+                                    method="post"
+                                    action="https://vinylbay777.com/cart/add"
+                                    id="product-form-9555080413466"
+                                    accept-charset="UTF-8"
+                                    class="shopify-product-form"
+                                    enctype="multipart/form-data"
+                                    novalidate="novalidate"
+                                    data-type="add-to-cart-form"
+                                    data-stock-threshold="0"
+                                    data-event-context="ProductRecommendations"
+                                  >
+                                    <input
+                                      type="hidden"
+                                      name="form_type"
+                                      value="product"
+                                    /><input
+                                      type="hidden"
+                                      name="utf8"
+                                      value="✓"
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="id"
+                                      value="49524274266394"
+                                    />
+                                    <div
+                                      class="product-actions card-product-actions"
+                                    >
+                                      <div class="product-actions-add-to-cart">
+                                        <button
+                                          type="submit"
+                                          name="add"
+                                          class="button button-secondary button-add-to-cart button-solid"
+                                        >
+                                          <span>Add to cart</span>
+                                          <div
+                                            class="button-overlay-spinner hidden"
+                                          >
+                                            <span class="spinner-xs"></span>
+                                          </div>
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="product-form-error-message-wrapper form-status form-status-error"
+                                      role="alert"
+                                      hidden=""
+                                    >
+                                      <span
+                                        class="product-form-error-message"
+                                      ></span>
+                                    </div>
+                                    <input
+                                      type="hidden"
+                                      name="product-id"
+                                      value="9555080413466"
+                                    /><input
+                                      type="hidden"
+                                      name="section-id"
+                                      value="template--22972339028250__recommendations"
+                                    />
+                                  </form>
+                                </product-form>
+                              </div>
+                            </div>
+                          </div>
+                        </product-card>
+                      </li>
+                      <li class="grid-item">
+                        <link
+                          href="./product_page_files/component-rating.css"
+                          rel="stylesheet"
+                          type="text/css"
+                          media="all"
+                        />
+
+                        <product-card
+                          class="card card-product card-product-no-rating color-background-2"
+                        >
+                          <figure class="card-media">
+                            <a
+                              href="https://vinylbay777.com/products/12-12xlp-box-set-ex-the-worlds-most-beautiful-music-columbia-stereo?pr_prod_strat=collection_fallback&amp;pr_rec_id=0c87af7b3&amp;pr_rec_pid=9555055509786&amp;pr_ref_pid=9677669499162&amp;pr_seq=uniform"
+                              class="js-product-link"
+                            >
+                              <div
+                                class="aspect-ratio"
+                                style="--ratio-percent: 125%"
+                              >
+                                <img
+                                  src="./product_page_files/10_ac492b43-9f6f-463c-ad60-47037fe36a60.jpg"
+                                  alt='12" 12xLP Box Set EX The World&#39;s Most Beautiful Music Columbia Stereo'
+                                  srcset="
+                                    //vinylbay777.com/cdn/shop/files/10_ac492b43-9f6f-463c-ad60-47037fe36a60.jpg?v=1724202384&amp;width=185 185w,
+                                    //vinylbay777.com/cdn/shop/files/10_ac492b43-9f6f-463c-ad60-47037fe36a60.jpg?v=1724202384&amp;width=200 200w,
+                                    //vinylbay777.com/cdn/shop/files/10_ac492b43-9f6f-463c-ad60-47037fe36a60.jpg?v=1724202384&amp;width=370 370w,
+                                    //vinylbay777.com/cdn/shop/files/10_ac492b43-9f6f-463c-ad60-47037fe36a60.jpg?v=1724202384&amp;width=420 420w,
+                                    //vinylbay777.com/cdn/shop/files/10_ac492b43-9f6f-463c-ad60-47037fe36a60.jpg?v=1724202384&amp;width=650 650w,
+                                    //vinylbay777.com/cdn/shop/files/10_ac492b43-9f6f-463c-ad60-47037fe36a60.jpg?v=1724202384&amp;width=750 750w,
+                                    //vinylbay777.com/cdn/shop/files/10_ac492b43-9f6f-463c-ad60-47037fe36a60.jpg?v=1724202384&amp;width=950 950w
+                                  "
+                                  width="950"
+                                  height="1267"
+                                  loading="lazy"
+                                  class="card-media-image"
+                                  sizes="
+			
+				(min-width: 1200px) 420px, (min-width: 750px) calc((100vw - 4rem - 3rem) / 3), calc(100vw - 3rem - 1rem)
+			
+		
+"
+                                  data-xblocker="passed"
+                                  style="visibility: visible"
+                                />
+
+                                <img
+                                  src="./product_page_files/10_36757712-e247-4c88-88fd-0d8051f08d60.jpg"
+                                  alt='12" 12xLP Box Set EX The World&#39;s Most Beautiful Music Columbia Stereo'
+                                  srcset="
+                                    //vinylbay777.com/cdn/shop/files/10_36757712-e247-4c88-88fd-0d8051f08d60.jpg?v=1724202384&amp;width=185 185w,
+                                    //vinylbay777.com/cdn/shop/files/10_36757712-e247-4c88-88fd-0d8051f08d60.jpg?v=1724202384&amp;width=200 200w,
+                                    //vinylbay777.com/cdn/shop/files/10_36757712-e247-4c88-88fd-0d8051f08d60.jpg?v=1724202384&amp;width=370 370w,
+                                    //vinylbay777.com/cdn/shop/files/10_36757712-e247-4c88-88fd-0d8051f08d60.jpg?v=1724202384&amp;width=420 420w,
+                                    //vinylbay777.com/cdn/shop/files/10_36757712-e247-4c88-88fd-0d8051f08d60.jpg?v=1724202384&amp;width=650 650w,
+                                    //vinylbay777.com/cdn/shop/files/10_36757712-e247-4c88-88fd-0d8051f08d60.jpg?v=1724202384&amp;width=750 750w,
+                                    //vinylbay777.com/cdn/shop/files/10_36757712-e247-4c88-88fd-0d8051f08d60.jpg?v=1724202384&amp;width=950 950w
+                                  "
+                                  width="950"
+                                  height="1267"
+                                  loading="lazy"
+                                  class="card-media-image"
+                                  sizes="
+			
+				(min-width: 1200px) 420px, (min-width: 750px) calc((100vw - 4rem - 3rem) / 3), calc(100vw - 3rem - 1rem)
+			
+		
+"
+                                  data-xblocker="passed"
+                                  style="visibility: visible"
+                                />
+                              </div>
+                            </a>
+                          </figure>
+
+                          <div class="card-info-wrap">
+                            <div class="card-info">
+                              <div class="card-eyebrow">
+                                <a
+                                  href="https://vinylbay777.com/collections/vendors?q=Columbia%20Special%20Products"
+                                  title="Columbia Special Products"
+                                  >Columbia Special Products</a
+                                >
+                              </div>
+
+                              <h3 class="card-heading typography-body">
+                                <a
+                                  href="https://vinylbay777.com/products/12-12xlp-box-set-ex-the-worlds-most-beautiful-music-columbia-stereo?pr_prod_strat=collection_fallback&amp;pr_rec_id=0c87af7b3&amp;pr_rec_pid=9555055509786&amp;pr_ref_pid=9677669499162&amp;pr_seq=uniform"
+                                  class="js-product-link"
+                                >
+                                  12" 12xLP Box Set EX The World's Most
+                                  Beautiful Music Columbia Stereo</a
+                                >
+                              </h3>
+
+                              <div class="badge-stock badge-stock-in">
+                                <span class="badge-stock-icon"></span> In stock
+                              </div>
+                            </div>
+
+                            <div class="card-footer">
+                              <div class="price">
+                                <div class="price-container">
+                                  <div class="price-regular">
+                                    <span class="visually-hidden"
+                                      >Regular price</span
+                                    >
+                                    <span class="price-item price-item-regular">
+                                      $39.99
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="card-floating-footer">
+                                <product-form>
+                                  <form
+                                    method="post"
+                                    action="https://vinylbay777.com/cart/add"
+                                    id="product-form-9555055509786"
+                                    accept-charset="UTF-8"
+                                    class="shopify-product-form"
+                                    enctype="multipart/form-data"
+                                    novalidate="novalidate"
+                                    data-type="add-to-cart-form"
+                                    data-stock-threshold="0"
+                                    data-event-context="ProductRecommendations"
+                                  >
+                                    <input
+                                      type="hidden"
+                                      name="form_type"
+                                      value="product"
+                                    /><input
+                                      type="hidden"
+                                      name="utf8"
+                                      value="✓"
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="id"
+                                      value="49524151583002"
+                                    />
+                                    <div
+                                      class="product-actions card-product-actions"
+                                    >
+                                      <div class="product-actions-add-to-cart">
+                                        <button
+                                          type="submit"
+                                          name="add"
+                                          class="button button-secondary button-add-to-cart button-solid"
+                                        >
+                                          <span>Add to cart</span>
+                                          <div
+                                            class="button-overlay-spinner hidden"
+                                          >
+                                            <span class="spinner-xs"></span>
+                                          </div>
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="product-form-error-message-wrapper form-status form-status-error"
+                                      role="alert"
+                                      hidden=""
+                                    >
+                                      <span
+                                        class="product-form-error-message"
+                                      ></span>
+                                    </div>
+                                    <input
+                                      type="hidden"
+                                      name="product-id"
+                                      value="9555055509786"
+                                    /><input
+                                      type="hidden"
+                                      name="section-id"
+                                      value="template--22972339028250__recommendations"
+                                    />
+                                  </form>
+                                </product-form>
+                              </div>
+                            </div>
+                          </div>
+                        </product-card>
+                      </li>
+                      <li class="grid-item">
+                        <link
+                          href="./product_page_files/component-rating.css"
+                          rel="stylesheet"
+                          type="text/css"
+                          media="all"
+                        />
+
+                        <product-card
+                          class="card card-product card-product-no-rating color-background-2"
+                        >
+                          <figure class="card-media">
+                            <a
+                              href="https://vinylbay777.com/products/10xcd-box-set-arturo-benedetti-michelangeli-mozart-chopin-schumann-import?pr_prod_strat=collection_fallback&amp;pr_rec_id=0c87af7b3&amp;pr_rec_pid=9555061145882&amp;pr_ref_pid=9677669499162&amp;pr_seq=uniform"
+                              class="js-product-link"
+                            >
+                              <div
+                                class="aspect-ratio"
+                                style="--ratio-percent: 125%"
+                              >
+                                <img
+                                  src="./product_page_files/10_9f69aca6-c009-4cec-9341-90778ee2dac2.jpg"
+                                  alt="10xCD Box Set Arturo Benedetti Michelangeli Mozart-Chopin-Schumann... Import"
+                                  srcset="
+                                    //vinylbay777.com/cdn/shop/files/10_9f69aca6-c009-4cec-9341-90778ee2dac2.jpg?v=1724202568&amp;width=185 185w,
+                                    //vinylbay777.com/cdn/shop/files/10_9f69aca6-c009-4cec-9341-90778ee2dac2.jpg?v=1724202568&amp;width=200 200w,
+                                    //vinylbay777.com/cdn/shop/files/10_9f69aca6-c009-4cec-9341-90778ee2dac2.jpg?v=1724202568&amp;width=370 370w,
+                                    //vinylbay777.com/cdn/shop/files/10_9f69aca6-c009-4cec-9341-90778ee2dac2.jpg?v=1724202568&amp;width=420 420w,
+                                    //vinylbay777.com/cdn/shop/files/10_9f69aca6-c009-4cec-9341-90778ee2dac2.jpg?v=1724202568&amp;width=650 650w,
+                                    //vinylbay777.com/cdn/shop/files/10_9f69aca6-c009-4cec-9341-90778ee2dac2.jpg?v=1724202568&amp;width=750 750w,
+                                    //vinylbay777.com/cdn/shop/files/10_9f69aca6-c009-4cec-9341-90778ee2dac2.jpg?v=1724202568&amp;width=950 950w
+                                  "
+                                  width="950"
+                                  height="1267"
+                                  loading="lazy"
+                                  class="card-media-image"
+                                  sizes="
+			
+				(min-width: 1200px) 420px, (min-width: 750px) calc((100vw - 4rem - 3rem) / 3), calc(100vw - 3rem - 1rem)
+			
+		
+"
+                                  data-xblocker="passed"
+                                  style="visibility: visible"
+                                />
+
+                                <img
+                                  src="./product_page_files/10_1640e655-73bf-4b52-9406-77008e621e32.jpg"
+                                  alt="10xCD Box Set Arturo Benedetti Michelangeli Mozart-Chopin-Schumann... Import"
+                                  srcset="
+                                    //vinylbay777.com/cdn/shop/files/10_1640e655-73bf-4b52-9406-77008e621e32.jpg?v=1724202568&amp;width=185 185w,
+                                    //vinylbay777.com/cdn/shop/files/10_1640e655-73bf-4b52-9406-77008e621e32.jpg?v=1724202568&amp;width=200 200w,
+                                    //vinylbay777.com/cdn/shop/files/10_1640e655-73bf-4b52-9406-77008e621e32.jpg?v=1724202568&amp;width=370 370w,
+                                    //vinylbay777.com/cdn/shop/files/10_1640e655-73bf-4b52-9406-77008e621e32.jpg?v=1724202568&amp;width=420 420w,
+                                    //vinylbay777.com/cdn/shop/files/10_1640e655-73bf-4b52-9406-77008e621e32.jpg?v=1724202568&amp;width=650 650w,
+                                    //vinylbay777.com/cdn/shop/files/10_1640e655-73bf-4b52-9406-77008e621e32.jpg?v=1724202568&amp;width=750 750w,
+                                    //vinylbay777.com/cdn/shop/files/10_1640e655-73bf-4b52-9406-77008e621e32.jpg?v=1724202568&amp;width=950 950w
+                                  "
+                                  width="950"
+                                  height="1267"
+                                  loading="lazy"
+                                  class="card-media-image"
+                                  sizes="
+			
+				(min-width: 1200px) 420px, (min-width: 750px) calc((100vw - 4rem - 3rem) / 3), calc(100vw - 3rem - 1rem)
+			
+		
+"
+                                  data-xblocker="passed"
+                                  style="visibility: visible"
+                                />
+                              </div>
+                            </a>
+                          </figure>
+
+                          <div class="card-info-wrap">
+                            <div class="card-info">
+                              <div class="card-eyebrow">
+                                <a
+                                  href="https://vinylbay777.com/collections/vendors?q=Aura%20Music"
+                                  title="Aura Music"
+                                  >Aura Music</a
+                                >
+                              </div>
+
+                              <h3 class="card-heading typography-body">
+                                <a
+                                  href="https://vinylbay777.com/products/10xcd-box-set-arturo-benedetti-michelangeli-mozart-chopin-schumann-import?pr_prod_strat=collection_fallback&amp;pr_rec_id=0c87af7b3&amp;pr_rec_pid=9555061145882&amp;pr_ref_pid=9677669499162&amp;pr_seq=uniform"
+                                  class="js-product-link"
+                                >
+                                  10xCD Box Set Arturo Benedetti Michelangeli
+                                  Mozart-Chopin-Schumann... Import</a
+                                >
+                              </h3>
+
+                              <div class="badge-stock badge-stock-in">
+                                <span class="badge-stock-icon"></span> In stock
+                              </div>
+                            </div>
+
+                            <div class="card-footer">
+                              <div class="price">
+                                <div class="price-container">
+                                  <div class="price-regular">
+                                    <span class="visually-hidden"
+                                      >Regular price</span
+                                    >
+                                    <span class="price-item price-item-regular">
+                                      $60.00
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="card-floating-footer">
+                                <product-form>
+                                  <form
+                                    method="post"
+                                    action="https://vinylbay777.com/cart/add"
+                                    id="product-form-9555061145882"
+                                    accept-charset="UTF-8"
+                                    class="shopify-product-form"
+                                    enctype="multipart/form-data"
+                                    novalidate="novalidate"
+                                    data-type="add-to-cart-form"
+                                    data-stock-threshold="0"
+                                    data-event-context="ProductRecommendations"
+                                  >
+                                    <input
+                                      type="hidden"
+                                      name="form_type"
+                                      value="product"
+                                    /><input
+                                      type="hidden"
+                                      name="utf8"
+                                      value="✓"
+                                    />
+                                    <input
+                                      type="hidden"
+                                      name="id"
+                                      value="49524195131674"
+                                    />
+                                    <div
+                                      class="product-actions card-product-actions"
+                                    >
+                                      <div class="product-actions-add-to-cart">
+                                        <button
+                                          type="submit"
+                                          name="add"
+                                          class="button button-secondary button-add-to-cart button-solid"
+                                        >
+                                          <span>Add to cart</span>
+                                          <div
+                                            class="button-overlay-spinner hidden"
+                                          >
+                                            <span class="spinner-xs"></span>
+                                          </div>
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      class="product-form-error-message-wrapper form-status form-status-error"
+                                      role="alert"
+                                      hidden=""
+                                    >
+                                      <span
+                                        class="product-form-error-message"
+                                      ></span>
+                                    </div>
+                                    <input
+                                      type="hidden"
+                                      name="product-id"
+                                      value="9555061145882"
+                                    /><input
+                                      type="hidden"
+                                      name="section-id"
+                                      value="template--22972339028250__recommendations"
+                                    />
+                                  </form>
+                                </product-form>
+                              </div>
+                            </div>
+                          </div>
+                        </product-card>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </product-recommendations>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
     <footer class="footer">
+      <!-- BEGIN sections: footer-group -->
       <div
         id="shopify-section-sections--22972339323162__features"
         class="shopify-section shopify-section-group-footer-group section-features"
       >
         <link
-          href="/utils/product_page_files/component-card.css"
+          href="./product_page_files/component-card.css"
           rel="stylesheet"
           type="text/css"
           media="all"
         />
         <link
-          href="/utils/product_page_files/section-features.css"
+          href="./product_page_files/section-features.css"
           rel="stylesheet"
           type="text/css"
           media="all"
@@ -2552,7 +3920,7 @@ const Dashboard = () => {
                   <div class="media-icon-item">
                     <span class="media-icon-item-icon">
                       <img
-                        src="/utils/product_page_files/icon1.png"
+                        src="./product_page_files/icon1.png"
                         srcset="
                           //vinylbay777.com/cdn/shop/files/icon1.png?v=1719478834&amp;width=40 1x,
                           //vinylbay777.com/cdn/shop/files/icon1.png?v=1719478834&amp;width=80 2x
@@ -2576,7 +3944,7 @@ const Dashboard = () => {
                   <div class="media-icon-item">
                     <span class="media-icon-item-icon">
                       <img
-                        src="/utils/product_page_files/icon2.png"
+                        src="./product_page_files/icon2.png"
                         srcset="
                           //vinylbay777.com/cdn/shop/files/icon2.png?v=1719478834&amp;width=40 1x,
                           //vinylbay777.com/cdn/shop/files/icon2.png?v=1719478834&amp;width=80 2x
@@ -2603,7 +3971,7 @@ const Dashboard = () => {
                   <div class="media-icon-item">
                     <span class="media-icon-item-icon">
                       <img
-                        src="/utils/product_page_files/icon3.png"
+                        src="./product_page_files/icon3.png"
                         srcset="
                           //vinylbay777.com/cdn/shop/files/icon3.png?v=1719478834&amp;width=40 1x,
                           //vinylbay777.com/cdn/shop/files/icon3.png?v=1719478834&amp;width=80 2x
@@ -2627,7 +3995,7 @@ const Dashboard = () => {
                   <div class="media-icon-item">
                     <span class="media-icon-item-icon">
                       <img
-                        src="/utils/product_page_files/icon4.png"
+                        src="./product_page_files/icon4.png"
                         srcset="
                           //vinylbay777.com/cdn/shop/files/icon4.png?v=1719478834&amp;width=40 1x,
                           //vinylbay777.com/cdn/shop/files/icon4.png?v=1719478834&amp;width=80 2x
@@ -2658,14 +4026,14 @@ const Dashboard = () => {
         class="shopify-section shopify-section-group-footer-group section-footer"
       >
         <link
-          href="/utils/product_page_files/section-footer.css"
+          href="./product_page_files/section-footer.css"
           rel="stylesheet"
           type="text/css"
           media="all"
         />
         <link
           rel="stylesheet"
-          href="/utils/product_page_files/component-list-payment.css"
+          href="./product_page_files/component-list-payment.css"
           media="all"
         />
 
@@ -2679,7 +4047,7 @@ const Dashboard = () => {
 
         <link
           rel="stylesheet"
-          href="/utils/product_page_files/component-button-top.css"
+          href="./product_page_files/component-button-top.css"
           media="all"
         />
 
@@ -2696,7 +4064,7 @@ const Dashboard = () => {
                 </style>
                 <figure class="widget-media widget-media-footer-0">
                   <img
-                    src="/utils/product_page_files/Vinyl_Bay_777_logo_1(1).png"
+                    src="./product_page_files/Vinyl_Bay_777_logo_1(1).png"
                     alt=""
                     width="1694"
                     height="821"
@@ -2720,6 +4088,7 @@ const Dashboard = () => {
                 <ul class="list-unstyled">
                   <li>
                     <a
+                      href="https://vinylbay777.com/pages/faq"
                       class="link-text"
                     >
                       FAQ
@@ -2727,6 +4096,7 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <a
+                      href="https://vinylbay777.com/policies/privacy-policy"
                       class="link-text"
                     >
                       Privacy Policy
@@ -2734,6 +4104,7 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <a
+                      href="https://vinylbay777.com/policies/refund-policy"
                       class="link-text"
                     >
                       Refunds &amp; Returns
@@ -2741,6 +4112,7 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <a
+                      href="https://vinylbay777.com/policies/terms-of-service"
                       class="link-text"
                     >
                       Terms &amp; Conditions
@@ -2755,6 +4127,7 @@ const Dashboard = () => {
                 <ul class="list-unstyled">
                   <li>
                     <a
+                      href="https://vinylbay777.com/collections/vinyl"
                       class="link-text"
                     >
                       Vinyl
@@ -2762,6 +4135,7 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <a
+                      href="https://vinylbay777.com/collections/collectibles"
                       class="link-text"
                     >
                       Collectibles
@@ -2769,6 +4143,7 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <a
+                      href="https://vinylbay777.com/collections/art"
                       class="link-text"
                     >
                       Art
@@ -2776,6 +4151,7 @@ const Dashboard = () => {
                   </li>
                   <li>
                     <a
+                      href="https://vinylbay777.com/collections/all"
                       class="link-text"
                     >
                       Shop It All
@@ -2795,6 +4171,8 @@ const Dashboard = () => {
                   </div>
 
                   <form
+                    method="post"
+                    action="https://vinylbay777.com/contact#contact_form"
                     id="contact_form"
                     accept-charset="UTF-8"
                     class="newsletter-form"
@@ -2817,7 +4195,7 @@ const Dashboard = () => {
                       >
                       <input
                         type="email"
-                        pattern=".+@.+.(.+.?)+"
+                        pattern=".+@.+\.(.+\.?)+"
                         name="contact[email]"
                         id="form-newsletter-email-sections--22972339323162__footer-3"
                         placeholder="Your email"
@@ -2849,6 +4227,7 @@ const Dashboard = () => {
                     <li class="list-social-item">
                       <a
                         class="list-social-link"
+                        href="https://www.facebook.com/vinylbay777/"
                         target="_blank"
                       >
                         <svg
@@ -2871,6 +4250,7 @@ const Dashboard = () => {
                     <li class="list-social-item">
                       <a
                         class="list-social-link"
+                        href="https://www.instagram.com/vinylbay777/"
                         target="_blank"
                       >
                         <svg
@@ -2901,6 +4281,7 @@ const Dashboard = () => {
                     <li class="list-social-item">
                       <a
                         class="list-social-link"
+                        href="https://x.com/vinylbay777"
                         target="_blank"
                       >
                         <svg
@@ -2923,7 +4304,7 @@ const Dashboard = () => {
 
                 <div class="footer-info-copy">
                   © 2024
-                  <a title="">Vinyl Bay 777</a>.
+                  <a href="https://vinylbay777.com/" title="">Vinyl Bay 777</a>.
                   All right reserved
                 </div>
               </div>
@@ -2931,274 +4312,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <!-- END sections: footer-group -->
     </footer>
   </body>
 </html>
-`;
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "isVertical")
-      setAdData({
-        ...adData,
-        [name]: value === "true" ? true : value === "false" ? false : null,
-      });
-    else validateField(name, value);
-  };
-
-  const handleDragEnter = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
-      setAdData({ ...adData, banner: file });
-      setErrors({ ...errors, banner: "" });
-    } else {
-      setErrors({ ...errors, banner: "Please upload a valid image file." });
-    }
-  };
-
-  const handleFileInput = (e) => {
-    const file = e.target.files[0];
-
-    if (file && file.type.startsWith("image/")) {
-      setAdData({ ...adData, banner: file });
-      setErrors({ ...errors, banner: "" });
-    } else {
-      setErrors({ ...errors, banner: "Please upload a valid image file." });
-    }
-  };
-
-  const validateField = (name, value) => {
-    let error = "";
-    switch (name) {
-      case "link":
-        if (!value.trim()) error = "Link is required";
-        if (!/^(ftp|http|https):\/\/[^ "]+$/.test(value))
-          error = "Please enter a valid URL";
-        break;
-      case "isVertical":
-        if (value === null) error = "Banner location is required";
-        break;
-      default:
-        break;
-    }
-    setErrors({ ...errors, [name]: error });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isLoading) return;
-    const newErrors = {};
-    if (!adData.link.trim()) newErrors.link = "Link is required";
-    if (adData.isVertical === null || adData.isVertical === undefined)
-      newErrors.isVertical = "Banner location is required";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      setIsLoading(true);
-      const uploadingData = {
-        ...adData,
-        banner: adData.banner
-          ? {
-              base64: null,
-              type: adData.banner.type,
-            }
-          : null,
-      };
-      if (
-        adData.banner &&
-        adData.banner.type &&
-        adData.banner.type.startsWith("image/")
-      )
-        uploadingData.banner.base64 = await getBase64(adData.banner);
-      else uploadingData.banner = null;
-      try {
-        await Axios.post("/ads/submit", uploadingData, {
-          withCredentials: true,
-        });
-        enqueueSnackbar("Successfully submitted!", {
-          variant: "success",
-        });
-        setIsAlreadySetup(true);
-      } catch (error) {
-        if (
-          error &&
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        )
-          enqueueSnackbar(error.response.data.message, {
-            variant: "error",
-          });
-        else
-          enqueueSnackbar("Server error!", {
-            variant: "error",
-          });
-      }
-      setErrors({});
-      setIsLoading(false);
-    }
-  };
-
-  const reset = async () => {
-    if (isLoading) return;
-    setIsLoading(true);
-    try {
-      await Axios.get("/ads/reset", { withCredentials: true });
-      setAdData({ banner: null, link: "", isVertical: null });
-      if (bannerInputRef.current) bannerInputRef.current.value = null;
-      setIsAlreadySetup(false);
-    } catch (error) {
-      if (
-        error &&
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      )
-        enqueueSnackbar(error.response.data.message, {
-          variant: "error",
-        });
-      else
-        enqueueSnackbar("Server error!", {
-          variant: "error",
-        });
-    }
-    setIsLoading(false);
-  };
-
-  return (
-    <AdSetupForm component="form" onSubmit={handleSubmit}>
-      <Backdrop
-        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-        open={isLoading}
-        onClick={() => {}}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <Typography variant="h4" gutterBottom>
-        Set Up Your Ad
-      </Typography>
-      <DragDropArea
-        onDragEnter={handleDragEnter}
-        onDragOver={(e) => e.preventDefault()}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileInput}
-          style={{ display: "none" }}
-          id="banner-upload"
-          ref={bannerInputRef}
-        />
-        <label htmlFor="banner-upload">
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <FileUploadIcon style={{ color: "#757575", fontSize: 48 }} />
-            <Typography variant="body1" mt={2}>
-              {adData.banner && adData.banner.name
-                ? adData.banner.name
-                : "Drag & Drop or Click to Upload Banner"}
-            </Typography>
-          </Box>
-        </label>
-      </DragDropArea>
-      {errors.banner && <ErrorText>{errors.banner}</ErrorText>}
-      <br />
-      <FormField
-        fullWidth
-        label="Link"
-        name="link"
-        value={adData.link}
-        onChange={handleInputChange}
-        error={!!errors.link}
-        helperText={errors.link}
-        inputProps={{ "aria-label": "Link" }}
-      />
-      <FormControl sx={{ marginBottom: 2 }}>
-        <FormLabel id="banner-location">Banner location</FormLabel>
-        <RadioGroup
-          aria-labelledby="banner-location"
-          onChange={handleInputChange}
-          name="isVertical"
-          value={adData.isVertical}
-          row
-        >
-          <FormControlLabel value={true} control={<Radio />} label="Vertical" />
-          <FormControlLabel
-            value={false}
-            control={<Radio />}
-            label="Horizontal"
-          />
-        </RadioGroup>
-        <FormHelperText error>{errors.isVertical}</FormHelperText>
-      </FormControl>
-
-      <Box
-        display="flex"
-        justifyContent="flex-start"
-        alignItems="center"
-        gap={1}
-        marginBottom={5}
-      >
-        <SubmitButton
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="large"
-          disabled={isLoading}
-          startIcon={<FileUploadIcon />}
-        >
-          Submit
-        </SubmitButton>
-        {isAlreadySetup && (
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            disabled={isLoading}
-            onClick={reset}
-          >
-            Reset
-          </Button>
-        )}
-      </Box>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12}>
-          {/* <iframe
-            srcDoc={htmlContent()}
-            width="100%"
-            height="100%"
-            title="Iframe with Script"
-            style={{ border: "none" }}
-          ></iframe> */}
-          <iframe
-            // src="/utils/product_page.html"
-            srcDoc={htmlContent()}
-            height="500px"
-            title="Iframe with Script"
-            style={{
-              border: "none",
-              width: "125%",
-              height: "625px",
-              transform: "scale(0.8)",
-              transformOrigin: "top left",
-            }}
-          ></iframe>
-        </Grid>
-      </Grid>
-    </AdSetupForm>
-  );
-};
-
-export default Dashboard;
