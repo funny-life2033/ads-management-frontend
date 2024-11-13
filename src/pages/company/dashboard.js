@@ -3185,14 +3185,15 @@ const Dashboard = () => {
           <iframe
             // src="/utils/product_page.html"
             srcDoc={htmlContent()}
-            height="500px"
+            height="1000px"
             title="Iframe with Script"
             style={{
               border: "none",
               width: "125%",
-              height: "625px",
+              height: "1250px",
               transform: "scale(0.8)",
               transformOrigin: "top left",
+              marginBottom: "-250px",
             }}
           ></iframe>
         </Grid>
