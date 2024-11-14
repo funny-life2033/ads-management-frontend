@@ -2403,6 +2403,8 @@ const Dashboard = () => {
                 const horizontalImage = document.getElementById("banner_horizontal");
                 const verticalImage = document.querySelector("div.product-info-details");
 
+                if(!horizontalImage) return;
+
                 if(verticalImage.offsetWidth < 400) {
                   horizontalImage.style.height = verticalImage.offsetWidth + 'px';
                 } else {
@@ -2939,6 +2941,7 @@ const Dashboard = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(name, value);
     validateField(name, value);
     if (name === "isVertical")
       setAdData({
