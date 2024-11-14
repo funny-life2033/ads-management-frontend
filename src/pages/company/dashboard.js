@@ -2939,12 +2939,13 @@ const Dashboard = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    validateField(name, value);
     if (name === "isVertical")
       setAdData({
         ...adData,
         [name]: value === "true" ? true : value === "false" ? false : null,
       });
-    else validateField(name, value);
+    else setAdData({ ...adData, [name]: value });
   };
 
   const handleDragEnter = (e) => {
