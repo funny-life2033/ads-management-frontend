@@ -99,7 +99,13 @@ const SubcriptionPlans = ({ navigate }) => {
         variant: "success",
       });
       setPlans((plans) =>
-        plans.map((plan) => ({ ...plan, isYourPlan: false }))
+        plans.map((plan) => ({
+          ...plan,
+          isYourPlan: false,
+          nextPaymentDate: null,
+          endDate: null,
+          isPending: null,
+        }))
       );
     } catch (error) {
       if (
@@ -183,13 +189,15 @@ const SubcriptionPlans = ({ navigate }) => {
                     </PlanFeature>
                     <PlanFeature>
                       <Typography variant="body1">
-                        {plan.isPending
-                          ? "Your last payment is on pending now"
-                          : plan.nextPaymentDate
-                            ? `Your next payment date is ${plan.nextPaymentDate}`
-                            : plan.endDate
-                              ? `Your plan will end on ${plan.endDate}`
-                              : ""}
+                        {plan.isYourPlan
+                          ? plan.isPending
+                            ? "Your last payment is on pending now"
+                            : plan.nextPaymentDate
+                              ? `Your next payment date is ${plan.nextPaymentDate}`
+                              : plan.endDate
+                                ? `Your plan will end on ${plan.endDate}`
+                                : ""
+                          : ""}
                       </Typography>
                     </PlanFeature>
                   </Box>
