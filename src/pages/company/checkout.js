@@ -99,6 +99,12 @@ const Checkout = ({ productId, navigate }) => {
         setIsLoading(false);
       })
       .catch((error) => {
+        if (error.response && error.response.status === 403) {
+          enqueueSnackbar("Your token is invalid or expired", {
+            variant: "error",
+          });
+          return navigate("/authentication/login");
+        }
         if (
           error &&
           error.response &&
@@ -262,6 +268,12 @@ const Checkout = ({ productId, navigate }) => {
         });
         navigate("/dashboard");
       } catch (error) {
+        if (error.response && error.response.status === 403) {
+          enqueueSnackbar("Your token is invalid or expired", {
+            variant: "error",
+          });
+          return navigate("/authentication/login");
+        }
         if (
           error &&
           error.response &&

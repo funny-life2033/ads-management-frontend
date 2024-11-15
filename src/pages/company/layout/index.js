@@ -18,6 +18,7 @@ import Dashboard from "../dashboard";
 import { useSnackbar } from "notistack";
 import Checkout from "../checkout";
 import logo from "../../../utils/icon.png";
+import Ad from "../ad";
 
 const NAVIGATION = [
   // {
@@ -139,7 +140,15 @@ const Layout = ({ window }) => {
     >
       <DashboardLayout>
         <PageContainer>
-          {router.pathname === "/dashboard" && <Dashboard />}
+          {router.pathname === "/dashboard" && (
+            <Dashboard navigate={router.navigate} />
+          )}
+          {router.pathname.startsWith("/ad:") && (
+            <Ad
+              id={router.pathname.split("/ad:")[1]}
+              navigate={router.navigate}
+            />
+          )}
           {router.pathname === "/plans" && <Plans navigate={router.navigate} />}
           {router.pathname.startsWith("/checkout:") && (
             <Checkout
