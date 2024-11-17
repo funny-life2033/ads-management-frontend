@@ -200,6 +200,15 @@ const SubcriptionPlans = ({ navigate }) => {
                           : ""}
                       </Typography>
                     </PlanFeature>
+                    <PlanFeature>
+                      <Typography variant="body1">
+                        {plan.isYourPlan
+                          ? plan.isPending
+                            ? "Your ads will be live when your payment has been processed, within approximately 24 hours."
+                            : ""
+                          : ""}
+                      </Typography>
+                    </PlanFeature>
                   </Box>
 
                   {plan.isYourPlan ? (
