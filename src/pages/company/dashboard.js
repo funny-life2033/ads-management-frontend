@@ -156,7 +156,7 @@ const Dashboard = ({ navigate }) => {
           <Grid item xs={12} sm={12} md={12} lg={6} xl={4} key={ad.id}>
             <StyledCard sx={{}}>
               <CardMedia
-                component="img"
+                component={ad.bannerType === "image" ? "img" : "video"}
                 height="300"
                 image={ad.banner}
                 alt="Ad banner"
