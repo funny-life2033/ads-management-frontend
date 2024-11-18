@@ -84,6 +84,7 @@ const Ad = ({ id, navigate }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [adData, setAdData] = useState({
     banner: null,
+    bannerType: null,
     link: "",
     isVertical: null,
   });
@@ -114,10 +115,11 @@ const Ad = ({ id, navigate }) => {
             withCredentials: true,
           });
 
-          const { banner, link, isVertical } = res.data;
+          const { banner, bannerType, link, isVertical } = res.data;
           setIsAlreadySetup(true);
           setAdData({
             banner,
+            bannerType: bannerType || "image",
             link: link || "",
             isVertical: isVertical,
           });
@@ -152,7 +154,11 @@ const Ad = ({ id, navigate }) => {
 
   const getBase64 = async (file) => {
     return new Promise((res, err) => {
-      if (!file.type || !file.type.startsWith("image/")) err("");
+      if (
+        !file.type ||
+        (!file.type.startsWith("image/") && !file.type.startsWith("video/"))
+      )
+        err("");
       const reader = new FileReader();
       reader.onloadend = () => {
         res(reader.result);
@@ -160,6 +166,7 @@ const Ad = ({ id, navigate }) => {
       reader.onerror = () => {
         err(reader.error);
       };
+
       const blob = new Blob([file], { type: file.type });
       reader.readAsDataURL(blob);
     });
@@ -172,6 +179,7 @@ const Ad = ({ id, navigate }) => {
         : typeof adData.banner === "string"
           ? adData.banner
           : "https://images.unsplash.com/photo-1560472355-536de3962603?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80";
+
     const link = adData.link;
     const isVertical = adData.isVertical;
 
@@ -2378,7 +2386,16 @@ const Ad = ({ id, navigate }) => {
                   </ul>
                 </div>
 
-                ${isVertical === true ? `<img src="${src}" width="400" height="auto" id="banner_vertical" style="cursor: pointer; margin-bottom: 30px; margin-left: auto; margin-right: auto;" onclick="redirectToParent('${link}'); return false;" />` : ""}
+                ${
+                  isVertical === true
+                    ? adData.bannerType === "image"
+                      ? `<img src="${src}" width="400" height="auto" id="banner_vertical" style="cursor: pointer; margin-bottom: 30px; margin-left: auto; margin-right: auto;" onclick="redirectToParent('${link}'); return false;" />`
+                      : `<video id="banner_vertical" autoplay loop style="width: 400px; height: auto; cursor: pointer; margin-bottom: 30px; margin-left: auto; margin-right: auto;" onclick="redirectToParent('${link}'); return false;">
+                        <source src="${src}" />
+                        Your browser does not support the video tag.
+                      </video>`
+                    : ""
+                }
               </div>
 
               <div class="product-info-description">
@@ -2439,7 +2456,16 @@ const Ad = ({ id, navigate }) => {
               </div>
             </div>
             <div class="vinylbay-ads">
-              ${isVertical === false ? `<img id="banner_horizontal" src="${src}" height="auto" width="auto" style="cursor: pointer; margin-top: 20px;" onclick="redirectToParent('${link}'); return false;" />` : ""}
+              ${
+                isVertical === false
+                  ? adData.bannerType === "image"
+                    ? `<img id="banner_horizontal" src="${src}" height="auto" width="auto" style="cursor: pointer; margin-top: 20px;" onclick="redirectToParent('${link}'); return false;" />`
+                    : `<video id="banner_horizontal" autoplay loop style="width: auto; height: auto; cursor: pointer; margin-top: 20px;" onclick="redirectToParent('${link}'); return false;">
+                        <source src="${src}" />
+                        Your browser does not support the video tag.
+                      </video>`
+                  : ""
+              }
             </div>
             <script>
               const adjustHorizontalImageHeight = () => {
@@ -3004,23 +3030,32 @@ const Ad = ({ id, navigate }) => {
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
-      setAdData({ ...adData, banner: file });
+    inputFile(file);
+  };
+
+  const inputFile = (file) => {
+    if (
+      file &&
+      (file.type.startsWith("image/") || file.type.startsWith("video/"))
+    ) {
+      setAdData({
+        ...adData,
+        banner: file,
+        bannerType: file.type.startsWith("image/") ? "image" : "video",
+      });
       setErrors({ ...errors, banner: "" });
     } else {
-      setErrors({ ...errors, banner: "Please upload a valid image file." });
+      setErrors({
+        ...errors,
+        banner: "Please upload a valid image / video file.",
+      });
     }
   };
 
   const handleFileInput = (e) => {
     const file = e.target.files[0];
 
-    if (file && file.type.startsWith("image/")) {
-      setAdData({ ...adData, banner: file });
-      setErrors({ ...errors, banner: "" });
-    } else {
-      setErrors({ ...errors, banner: "Please upload a valid image file." });
-    }
+    inputFile(file);
   };
 
   const validateField = (name, value) => {
@@ -3044,7 +3079,25 @@ const Ad = ({ id, navigate }) => {
     e.preventDefault();
     if (isLoading) return;
     const newErrors = {};
+    if (!adData.banner) newErrors.banner = "Banner is required";
+    else if (typeof adData.banner === "string") {
+      if (!/^(ftp|http|https):\/\/[^ "]+$/.test(adData.banner)) {
+        newErrors.banner = "Please enter a valid banner URL";
+      }
+    } else if (adData.banner instanceof File) {
+      if (
+        !adData.banner.type.startsWith("image/") &&
+        !adData.banner.type.startsWith("video/")
+      ) {
+        newErrors.banner = "Please upload a valid image / video file.";
+      }
+    } else {
+      newErrors.banner = "Invalid input for banner";
+    }
+
     if (!adData.link.trim()) newErrors.link = "Link is required";
+    else if (!/^(ftp|http|https):\/\/[^ "]+$/.test(adData.link))
+      newErrors.link = "Please enter a valid URL";
     if (adData.isVertical === null || adData.isVertical === undefined)
       newErrors.isVertical = "Banner location is required";
 
@@ -3064,10 +3117,16 @@ const Ad = ({ id, navigate }) => {
       if (
         adData.banner &&
         adData.banner.type &&
-        adData.banner.type.startsWith("image/")
-      )
-        uploadingData.banner.base64 = await getBase64(adData.banner);
-      else uploadingData.banner = null;
+        (adData.banner.type.startsWith("image/") ||
+          adData.banner.type.startsWith("video/"))
+      ) {
+        try {
+          uploadingData.banner.base64 = await getBase64(adData.banner);
+        } catch (error) {
+          console.log("getting base64 err:", error);
+          return;
+        }
+      } else uploadingData.banner = null;
 
       if (id && id !== "") uploadingData.id = id;
       try {
@@ -3210,7 +3269,7 @@ const Ad = ({ id, navigate }) => {
       >
         <input
           type="file"
-          accept="image/*"
+          accept="image/*,video/*"
           onChange={handleFileInput}
           style={{ display: "none" }}
           id="banner-upload"
@@ -3228,25 +3287,40 @@ const Ad = ({ id, navigate }) => {
             <Typography variant="body1" mt={2}>
               {adData.banner instanceof File ||
               (typeof adData.banner === "string" && adData.banner !== "") ? (
-                <img
-                  src={
-                    adData.banner instanceof File
-                      ? URL.createObjectURL(adData.banner)
-                      : typeof adData.banner === "string"
-                        ? adData.banner
-                        : ""
-                  }
-                  width="100%"
-                  height={200}
-                  alt={
-                    adData.banner instanceof File
-                      ? adData.banner.name
-                      : typeof adData.banner === "string" &&
-                          adData.banner !== ""
-                        ? adData.banner
-                        : "Drag & Drop or Click to Upload Banner"
-                  }
-                />
+                adData.bannerType === "image" ? (
+                  <img
+                    src={
+                      adData.banner instanceof File
+                        ? URL.createObjectURL(adData.banner)
+                        : typeof adData.banner === "string"
+                          ? adData.banner
+                          : ""
+                    }
+                    width="100%"
+                    height={200}
+                    alt={
+                      adData.banner instanceof File
+                        ? adData.banner.name
+                        : typeof adData.banner === "string" &&
+                            adData.banner !== ""
+                          ? adData.banner
+                          : "Drag & Drop or Click to Upload Banner"
+                    }
+                  />
+                ) : (
+                  <video width="100%" height={200} autoPlay loop>
+                    <source
+                      src={
+                        adData.banner instanceof File
+                          ? URL.createObjectURL(adData.banner)
+                          : typeof adData.banner === "string"
+                            ? adData.banner
+                            : ""
+                      }
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                )
               ) : (
                 "Drag & Drop or Click to Upload Banner"
               )}
