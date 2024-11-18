@@ -3132,6 +3132,7 @@ const Ad = ({ id, navigate }) => {
       try {
         await Axios.post("/ads/submit", uploadingData, {
           withCredentials: true,
+          timeout: 600000,
         });
         enqueueSnackbar("Successfully submitted!", {
           variant: "success",
