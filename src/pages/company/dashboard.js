@@ -104,6 +104,7 @@ const Dashboard = ({ navigate }) => {
   };
 
   const handleChangeStatus = async (id) => {
+    setIsLoading(true);
     const newStatus = !ads.find((ad) => ad.id === id).isShown;
     setAds((ads) =>
       ads.map((ad) => (ad.id === id ? { ...ad, isShown: newStatus } : ad))
@@ -134,6 +135,7 @@ const Dashboard = ({ navigate }) => {
         ads.map((ad) => (ad.id === id ? { ...ad, isShown: !newStatus } : ad))
       );
     }
+    setIsLoading(false);
   };
 
   const handleAdd = () => {
@@ -169,7 +171,7 @@ const Dashboard = ({ navigate }) => {
               />
               <CardContent
                 sx={{
-                  height: 180,
+                  height: 200,
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
@@ -178,6 +180,10 @@ const Dashboard = ({ navigate }) => {
               >
                 <Typography>{ad.link}</Typography>
                 <Box>
+                  <Typography>
+                    Total Views: {ad.views.totalViews}, Today Views:{" "}
+                    {ad.views.todayViews}
+                  </Typography>
                   <Box>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <Switch
@@ -228,7 +234,7 @@ const Dashboard = ({ navigate }) => {
         <Grid item xs={12} sm={12} md={12} lg={6} xl={4}>
           <StyledCard
             sx={{
-              height: 500,
+              height: 520,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
