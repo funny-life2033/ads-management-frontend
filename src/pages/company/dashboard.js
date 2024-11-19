@@ -161,6 +161,7 @@ const Dashboard = ({ navigate }) => {
                 component={ad.bannerType === "image" ? "img" : "video"}
                 height="300"
                 image={ad.banner}
+                muted
                 alt="Ad banner"
                 sx={{
                   objectFit: "contain",

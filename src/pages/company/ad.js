@@ -2390,7 +2390,7 @@ const Ad = ({ id, navigate }) => {
                   isVertical === true
                     ? adData.bannerType === "image"
                       ? `<img src="${src}" width="400" height="auto" id="banner_vertical" style="cursor: pointer; margin-bottom: 30px; margin-left: auto; margin-right: auto;" onclick="redirectToParent('${link}'); return false;" />`
-                      : `<video id="banner_vertical" autoplay loop style="width: 400px; height: auto; cursor: pointer; margin-bottom: 30px; margin-left: auto; margin-right: auto;" onclick="redirectToParent('${link}'); return false;">
+                      : `<video id="banner_vertical" autoplay loop muted style="width: 400px; height: auto; cursor: pointer; margin-bottom: 30px; margin-left: auto; margin-right: auto;" onclick="redirectToParent('${link}'); return false;">
                         <source src="${src}" />
                         Your browser does not support the video tag.
                       </video>`
@@ -2460,7 +2460,7 @@ const Ad = ({ id, navigate }) => {
                 isVertical === false
                   ? adData.bannerType === "image"
                     ? `<img id="banner_horizontal" src="${src}" height="auto" width="auto" style="cursor: pointer; margin-top: 20px;" onclick="redirectToParent('${link}'); return false;" />`
-                    : `<video id="banner_horizontal" autoplay loop style="width: auto; height: auto; cursor: pointer; margin-top: 20px;" onclick="redirectToParent('${link}'); return false;">
+                    : `<video muted id="banner_horizontal" autoplay loop style="width: auto; height: auto; cursor: pointer; margin-top: 20px;" onclick="redirectToParent('${link}'); return false;">
                         <source src="${src}" />
                         Your browser does not support the video tag.
                       </video>`
@@ -3309,7 +3309,7 @@ const Ad = ({ id, navigate }) => {
                     }
                   />
                 ) : (
-                  <video width="100%" height={200} autoPlay loop>
+                  <video muted width="100%" height={200} autoPlay loop>
                     <source
                       src={
                         adData.banner instanceof File
