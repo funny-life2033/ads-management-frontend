@@ -4,6 +4,7 @@ import {
 } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import CompanyIcon from "@mui/icons-material/Business";
 // import BarChartIcon from "@mui/icons-material/BarChart";
 // import DescriptionIcon from "@mui/icons-material/Description";
 // import LayersIcon from "@mui/icons-material/Layers";
@@ -19,6 +20,8 @@ import { useSnackbar } from "notistack";
 import Checkout from "../checkout";
 import logo from "../../../utils/icon.png";
 import Ad from "../ad";
+import Cookies from "js-cookie";
+import CompanyList from "../companyList";
 
 const NAVIGATION = [
   // {
@@ -64,6 +67,14 @@ const NAVIGATION = [
   //   title: "Integrations",
   //   icon: <LayersIcon />,
   // },
+];
+
+const ADMIN_NAVIGATION = [
+  {
+    segment: "companyList",
+    title: "Company List",
+    icon: <CompanyIcon />,
+  },
 ];
 
 const demoTheme = extendTheme({
@@ -130,7 +141,9 @@ const Layout = ({ window }) => {
 
   return (
     <AppProvider
-      navigation={NAVIGATION}
+      navigation={NAVIGATION.concat(
+        Cookies.get("isAdmin") === "true" ? ADMIN_NAVIGATION : []
+      )}
       router={router}
       theme={demoTheme}
       window={demoWindow}
@@ -155,6 +168,9 @@ const Layout = ({ window }) => {
               productId={router.pathname.split("/checkout:")[1]}
               navigate={router.navigate}
             />
+          )}
+          {router.pathname === "/companyList" && (
+            <CompanyList navigate={router.navigate} />
           )}
         </PageContainer>
       </DashboardLayout>

@@ -83,9 +83,15 @@ const SubcriptionPlans = ({ navigate }) => {
       })
       .catch((error) => {
         console.log(error);
+        if (error.response && error.response.status === 403) {
+          enqueueSnackbar("Your token is invalid or expired", {
+            variant: "error",
+          });
+          return navigate("/authentication/login");
+        }
         setIsLoading(false);
       });
-  }, []);
+  }, [enqueueSnackbar, navigate]);
 
   const goToCheckout = (productId) => {
     navigate(`/checkout:${productId}`);
