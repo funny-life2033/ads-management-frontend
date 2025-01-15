@@ -9,13 +9,14 @@ import {
   Fade,
   Backdrop,
   CircularProgress,
+  TextField,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Axios } from "../../utils/utils";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import { useSnackbar } from "notistack";
-// import { FaCheck, FaTimes, FaRocket, FaCog, FaCrown } from "react-icons/fa";
+import Cookies from "js-cookie";
 
 const PlanCard = styled(Card)(({ theme, ispopular }) => ({
   height: "100%",
@@ -128,6 +129,70 @@ const SubcriptionPlans = ({ navigate }) => {
     setIsClosing(false);
   };
 
+  const handleTitleChange = (planId, newValue) => {
+    setPlans((plans) =>
+      plans.map((plan) =>
+        plan.id === planId ? { ...plan, title: newValue, editted: true } : plan
+      )
+    );
+  };
+
+  const handlePriceChange = (planId, newValue) => {
+    setPlans((plans) =>
+      plans.map((plan) =>
+        plan.id === planId ? { ...plan, price: newValue, editted: true } : plan
+      )
+    );
+  };
+
+  const handleDescriptionChange = (planId, newValue) => {
+    setPlans((plans) =>
+      plans.map((plan) =>
+        plan.id === planId
+          ? { ...plan, description: newValue, editted: true }
+          : plan
+      )
+    );
+  };
+
+  const applyChange = async (planId) => {
+    const plan = plans.find((plan) => plan.id === planId);
+    if (plan) {
+      setIsLoading(true);
+      try {
+        const res = await Axios.post(
+          `/product/${planId}`,
+          {
+            title: plan.title,
+            price: plan.price,
+            description: plan.description,
+          },
+          { withCredentials: true }
+        );
+        enqueueSnackbar(res.data.message, {
+          variant: "success",
+        });
+        setPlans((plans) =>
+          plans.map((plan) =>
+            plan.id === planId ? { ...plan, editted: null } : plan
+          )
+        );
+      } catch (error) {
+        if (
+          error &&
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        )
+          enqueueSnackbar(error.response.data.message, {
+            variant: "error",
+          });
+        else enqueueSnackbar("Server error!", { variant: "error" });
+      }
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: 8 }}>
       <Backdrop
@@ -179,18 +244,64 @@ const SubcriptionPlans = ({ navigate }) => {
                         <RocketLaunchIcon style={{ fontSize: 24 }} />
                       </Box>
                     </Box>
-                    <PlanTitle variant="h4" align="center">
-                      {plan.title}
+                    <PlanTitle
+                      variant="h4"
+                      align={
+                        Cookies.get("isAdmin") === "true" ? "left" : "center"
+                      }
+                    >
+                      {Cookies.get("isAdmin") === "true" ? (
+                        <TextField
+                          value={plan.title}
+                          label="Plan Title"
+                          variant="standard"
+                          onChange={(e) =>
+                            handleTitleChange(plan.id, e.target.value)
+                          }
+                        />
+                      ) : (
+                        plan.title
+                      )}
                     </PlanTitle>
-                    <PlanPrice variant="h3" align="center" color="primary">
-                      {plan.price}
+                    <PlanPrice
+                      variant="h3"
+                      align={
+                        Cookies.get("isAdmin") === "true" ? "left" : "center"
+                      }
+                      color="primary"
+                    >
+                      {Cookies.get("isAdmin") === "true" ? (
+                        <TextField
+                          value={parseInt(plan.price)}
+                          label="Plan Price"
+                          variant="standard"
+                          type="number"
+                          onChange={(e) =>
+                            handlePriceChange(plan.id, e.target.value)
+                          }
+                        />
+                      ) : (
+                        plan.price
+                      )}
                       <Typography variant="subtitle1" component="span">
                         /month
                       </Typography>
                     </PlanPrice>
                     <PlanFeature>
-                      <Typography variant="body1">
-                        {plan.description}
+                      <Typography variant="body1" sx={{ width: "100%" }}>
+                        {Cookies.get("isAdmin") === "true" ? (
+                          <TextField
+                            value={plan.description}
+                            label="Plan Description"
+                            variant="standard"
+                            fullWidth
+                            onChange={(e) =>
+                              handleDescriptionChange(plan.id, e.target.value)
+                            }
+                          />
+                        ) : (
+                          plan.description
+                        )}
                       </Typography>
                     </PlanFeature>
                     <PlanFeature>
@@ -217,7 +328,26 @@ const SubcriptionPlans = ({ navigate }) => {
                     </PlanFeature>
                   </Box>
 
-                  {plan.isYourPlan ? (
+                  {Cookies.get("isAdmin") === "true" ? (
+                    <CtaButton
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      size="large"
+                      sx={{
+                        mt: 4,
+                        bgcolor: plan.color,
+                        "&:hover": {
+                          bgcolor: plan.color,
+                          filter: "brightness(90%)",
+                        },
+                      }}
+                      disabled={isLoading || !plan.editted}
+                      onClick={() => applyChange(plan.id)}
+                    >
+                      Save
+                    </CtaButton>
+                  ) : plan.isYourPlan ? (
                     <>
                       <CtaButton
                         variant="contained"

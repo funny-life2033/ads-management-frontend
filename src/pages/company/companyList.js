@@ -82,6 +82,10 @@ const CompanyList = ({ navigate }) => {
     setPage(1);
   };
 
+  const goToAds = (companyId) => {
+    navigate(`/company:${companyId}/ads`);
+  };
+
   const handleRemoveCompany = async () => {
     if (selectedCompany) {
       setIsLoading(true);
@@ -237,7 +241,26 @@ const CompanyList = ({ navigate }) => {
                   </Box>
                 </TableCell>
                 {!isMobile && <TableCell>{company.email}</TableCell>}
-                <TableCell align="center">{company.adsCount}</TableCell>
+                <TableCell
+                  align="center"
+                  sx={
+                    company.adsCount
+                      ? {
+                          transition: "all 0.5s",
+                          "&:hover": {
+                            textDecoration: "underline",
+                            cursor: "pointer",
+                            color: "red",
+                          },
+                        }
+                      : {}
+                  }
+                  onClick={
+                    company.adsCount ? () => goToAds(company.id) : () => {}
+                  }
+                >
+                  {company.adsCount}
+                </TableCell>
                 <TableCell align="center">
                   <Tooltip title="Remove Company">
                     <IconButton

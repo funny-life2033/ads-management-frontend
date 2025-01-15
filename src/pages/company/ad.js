@@ -22,6 +22,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import { Axios } from "../../utils/utils";
 import { useSnackbar } from "notistack";
+import Cookies from "js-cookie";
 
 const AdSetupForm = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -3233,32 +3234,36 @@ const Ad = ({ id, navigate }) => {
       <Typography variant="h4" gutterBottom>
         Set Up Your Ad
       </Typography>
-      <Typography
-        variant="h4"
-        fontWeight={900}
-        gutterBottom
-        display="flex"
-        alignItems="center"
-      >
-        <Typography variant="label" color="orange">
-          1.{" "}
+      {Cookies.get("isAdmin") === "true" ? (
+        ""
+      ) : (
+        <Typography
+          variant="h4"
+          fontWeight={900}
+          gutterBottom
+          display="flex"
+          alignItems="center"
+        >
+          <Typography variant="label" color="orange">
+            1.{" "}
+          </Typography>
+          Choose your advertising plan.{" "}
+          {isPurchased ? (
+            <CheckIcon sx={{ fontSize: 50, fontWeight: 900, color: "green" }} />
+          ) : (
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => navigate("/plans")}
+            >
+              View Plans
+            </Button>
+          )}
         </Typography>
-        Choose your advertising plan.{" "}
-        {isPurchased ? (
-          <CheckIcon sx={{ fontSize: 50, fontWeight: 900, color: "green" }} />
-        ) : (
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => navigate("/plans")}
-          >
-            View Plans
-          </Button>
-        )}
-      </Typography>
+      )}
       <Typography variant="h4" fontWeight={900} gutterBottom>
         <Typography variant="label" color="orange">
-          2.{" "}
+          {Cookies.get("isAdmin") === "true" ? "1" : "2"}.{" "}
         </Typography>
         Upload your ad.
       </Typography>
@@ -3337,7 +3342,7 @@ const Ad = ({ id, navigate }) => {
       <br />
       <Typography variant="h4" fontWeight={900} gutterBottom>
         <Typography variant="label" color="orange">
-          3.{" "}
+          {Cookies.get("isAdmin") === "true" ? "2" : "3"}.{" "}
         </Typography>
         Add your link.
       </Typography>
@@ -3354,7 +3359,7 @@ const Ad = ({ id, navigate }) => {
 
       <Typography variant="h4" fontWeight={900} gutterBottom>
         <Typography variant="label" color="orange">
-          4.{" "}
+          {Cookies.get("isAdmin") === "true" ? "3" : "4"}.{" "}
         </Typography>
         Choose your banner style & location.
       </Typography>

@@ -22,6 +22,7 @@ import logo from "../../../utils/icon.png";
 import Ad from "../ad";
 import Cookies from "js-cookie";
 import CompanyList from "../companyList";
+import Ads from "../ads";
 
 const NAVIGATION = [
   // {
@@ -172,6 +173,15 @@ const Layout = ({ window }) => {
           {router.pathname === "/companyList" && (
             <CompanyList navigate={router.navigate} />
           )}
+          {router.pathname.startsWith("/company:") &&
+            router.pathname.endsWith("/ads") && (
+              <Ads
+                navigate={router.navigate}
+                companyId={
+                  router.pathname.split("/company:")[1].split("/ads")[0]
+                }
+              />
+            )}
         </PageContainer>
       </DashboardLayout>
     </AppProvider>
